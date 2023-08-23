@@ -1,0 +1,11 @@
+build/
+/tags
+node_modules/
+.env.local
+public/config.js
+.vscode/
+.tern-project
+# directory files for image previews
+.directory
+coverage/
+.venv

@@ -1,0 +1,44 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main, stable, oldstable ]
+  pull_request:
+    branches: [ main, stable, oldstable ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+  schedule:
+    - cron: '30 5 * * 0' # 5:30h on Sundays
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+      # build between init and analyze ...
+    - name: Install node
+      uses: actions/setup-node@v3
+      with:
+        cache: 'yarn'
+    - name: Install dependencies
+      run: yarn install --prefer-offline
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
