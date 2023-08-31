@@ -30,19 +30,19 @@ FROM node:alpine
 
 WORKDIR /client
 
-COPY gsa/package.json /client
+COPY ./package.json .
 
 # CMD bash;
 
 RUN npm install
 
-COPY ./gsa /client
+COPY . .
 
-ENTRYPOINT ["tail"]
-CMD ["-f","/dev/null"]
+# ENTRYPOINT ["tail"]
+# CMD ["-f","/dev/null"]
 # RUN mkdir /gsa/node_modules/.cache && chmod -R 777 /gsa/node_modules/.cache
 # USER node
-# CMD npm start ;
+CMD npm start ;
 # CMD gsad --http-only -p 9392 --http-cors="http://127.0.0.1:8080" ; npm start
 # CMD bash /usr/local/bin/start-gsad ; npm start
 

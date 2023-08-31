@@ -164,7 +164,7 @@ const LoginForm = ({
 
           {showLogin && !isIE11 && (
             <StyledLayout flex={'column'}>
-              <H1>{_('ffsfsdfsdfds')}</H1>
+              <H1>{_('Cyber check risk systems')}</H1>
               <Input
                 margin={'normal'}
                 type={'text'}

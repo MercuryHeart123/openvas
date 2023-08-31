@@ -1,6 +1,11 @@
 services:
   vulnerability-tests:
     image: greenbone/vulnerability-tests
+    # build:
+    #   context: vulnerability-tests
+    #   dockerfile: Dockerfile
+    # healthcheck:
+    #   disable: true
     environment:
       STORAGE_PATH: /var/lib/openvas/22.04/vt-data/nasl
     volumes:
@@ -59,8 +64,11 @@ services:
       - psql_socket_vol:/var/run/postgresql
 
   gvmd:
-    image: greenbone/gvmd:stable
+    image: mercuryheart/gvmd:stable
     restart: on-failure
+    build:
+      context: gvmd
+      dockerfile: Dockerfile
     volumes:
       - gvmd_data_vol:/var/lib/gvm
       - scap_data_vol:/var/lib/gvm/scap-data/
@@ -100,21 +108,24 @@ services:
   gsa-custome:
     image: mercuryheart/gsa-custome:lastest
     build:
-      dockerfile: ./gsa/Dockerfile.dev
+      context: gsa
+      dockerfile: Dockerfile.dev
     ports:
-      - 9394:9392
+      - 9392:9392
     volumes:
       - ./gsa:/client
       - node_modules_vol:/client/node_modules
       - gvmd_socket_vol:/run/gvmd
-
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - gsad
 
   gsad:
     image: mercuryheart/gsad:stable
     build:
-      dockerfile: ./gsad/Dockerfile
+      context: gsad
+      dockerfile: Dockerfile
     restart: on-failure
     ports:
       - 9393:9393
@@ -148,30 +159,33 @@ services:
       #   depends_on:
       #     - gvmd
 
-  ospd-openvas:
-    image: greenbone/ospd-openvas:stable
+  ospd:
+    image: mercuryheart/ospd-openvas:stable
     restart: on-failure
     init: true
-    hostname: ospd-openvas.local
+    build:
+      context: ospd
+      dockerfile: Dockerfile
+    hostname: ospd.local
     cap_add:
       - NET_ADMIN # for capturing packages in promiscuous mode
       - NET_RAW # for raw sockets e.g. used for the boreas alive detection
     security_opt:
       - seccomp=unconfined
       - apparmor=unconfined
-    command:
-      [
-        "ospd-openvas",
-        "-f",
-        "--config",
-        "/etc/gvm/ospd-openvas.conf",
-        "--mqtt-broker-address",
-        "mqtt-broker",
-        "--notus-feed-dir",
-        "/var/lib/notus/advisories",
-        "-m",
-        "666"
-      ]
+    # command:
+    #   [
+    #     "ospd-openvas",
+    #     "-f",
+    #     "--config",
+    #     "/etc/gvm/ospd-openvas.conf",
+    #     "--mqtt-broker-address",
+    #     "mqtt-broker",
+    #     "--notus-feed-dir",
+    #     "/var/lib/notus/advisories",
+    #     "-m",
+    #     "666"
+    #   ]
     volumes:
       - gpg_data_vol:/etc/openvas/gnupg
       - vt_data_vol:/var/lib/openvas/plugins
@@ -218,7 +232,7 @@ services:
       - ospd_openvas_socket_vol:/run/ospd
     depends_on:
       - gvmd
-      - ospd-openvas
+      - ospd
 
 volumes:
   gpg_data_vol:
