@@ -14,8 +14,7 @@ COPY entrypoint.sh /
 RUN chmod 777 /entrypoint.sh
 COPY cronjob.sh /
 RUN chmod 777 /cronjob.sh
-
-RUN crontab -l | { cat; echo "*0 10 * * * bash /cronjob.sh"; } | crontab -
+RUN crontab -l | { cat; echo "0 * * * * bash /cronjob.sh"; } | crontab -
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD [ "/usr/local/bin/start-gvmd" ]

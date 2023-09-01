@@ -1,9 +1,9 @@
 services:
   vulnerability-tests:
-    image: greenbone/vulnerability-tests
-    # build:
-    #   context: vulnerability-tests
-    #   dockerfile: Dockerfile
+    image: mercuryheart/vulnerability-tests
+    build:
+      context: vulnerability-tests
+      dockerfile: Dockerfile
     # healthcheck:
     #   disable: true
     environment:
@@ -17,36 +17,54 @@ services:
       - notus_data_vol:/mnt
 
   scap-data:
-    image: greenbone/scap-data
+    image: mercuryheart/scap-data
+    build:
+      context: scap-data
+      dockerfile: Dockerfile
     volumes:
       - scap_data_vol:/mnt
 
   cert-bund-data:
-    image: greenbone/cert-bund-data
+    image: mercuryheart/cert-bund-data
+    build:
+      context: cert-bund-data
+      dockerfile: Dockerfile
     volumes:
       - cert_data_vol:/mnt
 
   dfn-cert-data:
-    image: greenbone/dfn-cert-data
+    image: mercuryheart/dfn-cert-data
+    build:
+      context: dfn-cert-data
+      dockerfile: Dockerfile
     volumes:
       - cert_data_vol:/mnt
     depends_on:
       - cert-bund-data
 
   data-objects:
-    image: greenbone/data-objects
+    image: mercuryheart/data-objects
+    build:
+      context: data-objects
+      dockerfile: Dockerfile
     volumes:
       - data_objects_vol:/mnt
 
   report-formats:
-    image: greenbone/report-formats
+    image: mercuryheart/report-formats
+    build:
+      context: report-formats
+      dockerfile: Dockerfile
     volumes:
       - data_objects_vol:/mnt
     depends_on:
       - data-objects
 
   gpg-data:
-    image: greenbone/gpg-data
+    image: mercuryheart/gpg-data
+    build:
+      context: gpg-data
+      dockerfile: Dockerfile
     volumes:
       - gpg_data_vol:/mnt
 
