@@ -109,6 +109,14 @@ class LoginPage extends React.Component {
 
   login(username, password) {
     const { gmp } = this.props;
+    gmp.djangoLogin(username, password).then(
+      data => {
+        console.log('login data ', data);
+      },
+      rej => {
+        console.log('login rej ', rej);
+      },
+    )
     gmp.login(username, password).then(
       data => {
         const { locale, timezone, sessionTimeout } = data;

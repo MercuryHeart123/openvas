@@ -20,7 +20,7 @@ COPY cronjob.sh /
 RUN chmod 777 /cronjob.sh
 #update nvt feed every hour with  crontab
 # RUN crontab -l | { cat; echo "*/5 * * * * echo cronjob update >> /var/log/gvm/ospd-openvas.log"; } | crontab -
-RUN crontab -l | { cat; echo "0 * * * * bash /cronjob.sh"; } | crontab -
+RUN crontab -l | { cat; echo "0 */12 * * * bash /cronjob.sh"; } | crontab -
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ospd-openvas -f --config /etc/gvm/ospd-openvas.conf --mqtt-broker-address mqtt-broker --notus-feed-dir /var/lib/notus/advisories -m 666
 # ENV PATH="${PATH}:/home/ospd-openvas/.local/bin/"

@@ -23,8 +23,8 @@ import equal from 'fast-deep-equal';
 
 import _ from 'gmp/locale';
 
-import {isDefined} from 'gmp/utils/identity';
-import {excludeObjectProps} from 'gmp/utils/object';
+import { isDefined } from 'gmp/utils/identity';
+import { excludeObjectProps } from 'gmp/utils/object';
 
 import IconDivider from 'web/components/layout/icondivider';
 import Layout from 'web/components/layout/layout';
@@ -34,7 +34,7 @@ import Loading from 'web/components/loading/loading';
 import PropTypes from 'web/utils/proptypes';
 import Theme from 'web/utils/theme';
 
-import Display, {DISPLAY_HEADER_HEIGHT, DISPLAY_BORDER_WIDTH} from './display';
+import Display, { DISPLAY_HEADER_HEIGHT, DISPLAY_BORDER_WIDTH } from './display';
 import DataDisplayIcons from './datadisplayicons';
 
 const ownProps = [
@@ -115,7 +115,7 @@ class DataDisplay extends React.Component {
     this.state = {
       data,
       originalData: this.props.data,
-      title: this.props.title({data, id: this.props.id}),
+      title: this.props.title({ data, id: this.props.id }),
     };
 
     this.handleDownloadSvg = this.handleDownloadSvg.bind(this);
@@ -141,10 +141,12 @@ class DataDisplay extends React.Component {
   }
 
   static getTransformedData(props) {
-    const {data, dataTransform, ...other} = props;
+    const { data, customeData, dataTransform, ...other } = props;
 
     const tprops = excludeObjectProps(other, ownProps);
-
+    if (isDefined(customeData)) {
+      return customeData;
+    }
     return isDefined(dataTransform) ? dataTransform(data, tprops) : data;
   }
 
@@ -172,8 +174,8 @@ class DataDisplay extends React.Component {
   }
 
   createSvgUrl() {
-    const {current: svg} = this.svgRef;
-    const {height, width} = this.props;
+    const { current: svg } = this.svgRef;
+    const { height, width } = this.props;
 
     const svg_data = `<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
      "http://www.w3.org/TR/SVG/DTD/svg10.dtd">
@@ -184,7 +186,7 @@ class DataDisplay extends React.Component {
         ${svg.innerHTML}
       </svg>`;
 
-    const svg_blob = new Blob([svg_data], {type: 'image/svg+xml'});
+    const svg_blob = new Blob([svg_data], { type: 'image/svg+xml' });
     return URL.createObjectURL(svg_blob);
   }
 
@@ -211,8 +213,8 @@ class DataDisplay extends React.Component {
   }
 
   handleDownloadSvg() {
-    const {current: download} = this.downloadRef;
-    const {current: svg} = this.svgRef;
+    const { current: download } = this.downloadRef;
+    const { current: svg } = this.svgRef;
 
     if (!svg || !download) {
       // don't crash if refs haven't been set in some way
@@ -229,10 +231,10 @@ class DataDisplay extends React.Component {
   }
 
   handleDownloadCsv() {
-    const {current: download} = this.downloadRef;
+    const { current: download } = this.downloadRef;
 
-    const {dataTitles, dataRow} = this.props;
-    const {data, title} = this.state;
+    const { dataTitles, dataRow } = this.props;
+    const { data, title } = this.state;
 
     this.cleanupDownloadCsv();
 
@@ -246,7 +248,7 @@ class DataDisplay extends React.Component {
       ),
     ].join('\n');
 
-    const csv_blob = new Blob([csv_data], {type: 'text/csv'});
+    const csv_blob = new Blob([csv_data], { type: 'text/csv' });
     this.downloadCsvUrl = URL.createObjectURL(csv_blob);
 
     download.setAttribute('href', this.downloadCsvUrl);
@@ -259,9 +261,10 @@ class DataDisplay extends React.Component {
   }
 
   render() {
-    const {data: transformedData, title} = this.state;
+    const { data: transformedData, title } = this.state;
     let {
-      data: originalData,
+      data: originalData, // todo fix this
+      customeData,
       height,
       width,
       isLoading,
@@ -285,7 +288,7 @@ class DataDisplay extends React.Component {
     height = height - DISPLAY_HEADER_HEIGHT;
     width = width - DISPLAY_BORDER_WIDTH;
 
-    isLoading = isLoading && !isDefined(originalData);
+    isLoading = isLoading && !isDefined(customeData || originalData); // fix
 
     const otherProps = excludeObjectProps(props, ownProps);
     const showCsvDownload = isDefined(dataRow) && isDefined(dataTitles);

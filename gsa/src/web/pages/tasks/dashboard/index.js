@@ -19,7 +19,9 @@ import React from 'react';
 
 import Dashboard from '../../../components/dashboard/dashboard';
 
-import {TasksStatusDisplay, TasksStatusTableDisplay} from './statusdisplay';
+import { TasksStatusDisplay, TasksStatusTableDisplay } from './statusdisplay';
+
+import { UpdateDisplay } from './updatedisplay';
 import {
   TasksSeverityDisplay,
   TasksSeverityTableDisplay,
@@ -28,7 +30,7 @@ import {
   TasksSchedulesDisplay,
   TasksSchedulesTableDisplay,
 } from './schedulesdisplay';
-import {TasksCvssDisplay, TasksCvssTableDisplay} from './cvssdisplay';
+import { TasksCvssDisplay, TasksCvssTableDisplay } from './cvssdisplay';
 import {
   TasksMostHighResultsDisplay,
   TasksMostHighResultsTableDisplay,
@@ -41,6 +43,7 @@ import {
 export const TASK_DASHBOARD_ID = '3d5db3c7-5208-4b47-8c28-48efc621b1e0';
 
 export const TASKS_DISPLAYS = [
+  UpdateDisplay.displayId,
   TasksStatusDisplay.displayId,
   TasksSeverityDisplay.displayId,
   TasksSchedulesDisplay.displayId,

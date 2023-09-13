@@ -20,7 +20,7 @@ import memoize from 'memoize-one';
 
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -28,10 +28,10 @@ import _ from 'gmp/locale';
 
 import Logger from 'gmp/log';
 
-import {DEFAULT_ROW_HEIGHT} from 'gmp/commands/dashboards';
+import { DEFAULT_ROW_HEIGHT } from 'gmp/commands/dashboards';
 
-import {isDefined} from 'gmp/utils/identity';
-import {excludeObjectProps} from 'gmp/utils/object';
+import { isDefined } from 'gmp/utils/identity';
+import { excludeObjectProps } from 'gmp/utils/object';
 
 import {
   loadSettings,
@@ -58,8 +58,8 @@ import PropTypes from 'web/utils/proptypes';
 import withGmp from 'web/utils/withGmp';
 import compose from 'web/utils/compose';
 
-import {getDisplay} from './registry';
-import {getRows} from './utils';
+import { getDisplay } from './registry';
+import { getRows } from './utils';
 
 const log = Logger.getLogger('web.components.dashboard');
 
@@ -92,7 +92,7 @@ export class Dashboard extends React.Component {
   constructor(...args) {
     super(...args);
 
-    const {permittedDisplays = []} = this.props;
+    const { permittedDisplays = [] } = this.props;
 
     this.components = {};
     permittedDisplays.forEach(displayId => {
@@ -169,7 +169,7 @@ export class Dashboard extends React.Component {
   }
 
   handleInteraction() {
-    const {onInteraction} = this.props;
+    const { onInteraction } = this.props;
 
     if (isDefined(onInteraction)) {
       onInteraction();
@@ -198,7 +198,7 @@ export class Dashboard extends React.Component {
   }
 
   updateDisplayState(id, state) {
-    this.updateDisplay(id, {state});
+    this.updateDisplay(id, { state });
   }
 
   updateDisplay(id, props) {
@@ -233,11 +233,11 @@ export class Dashboard extends React.Component {
   }
 
   updateRows(rows) {
-    this.save({rows});
+    this.save({ rows });
   }
 
   save(settings) {
-    const {id} = this.props;
+    const { id } = this.props;
 
     this.props.saveSettings(id, settings);
 
@@ -250,9 +250,9 @@ export class Dashboard extends React.Component {
       isLoading,
       maxItemsPerRow = DEFAULT_MAX_ITEMS_PER_ROW,
       maxRows = DEFAULT_MAX_ROWS,
+      gmp,
       ...props
     } = this.props;
-
     const rows = this.getRows();
 
     if (isDefined(error) && !isLoading) {
@@ -294,12 +294,13 @@ export class Dashboard extends React.Component {
           onChange={this.handleItemsChange}
           onRowResize={this.handleRowResize}
         >
-          {({id, dragHandleProps, height, width}) => {
-            const {displayId, ...displayProps} = getDisplaySettings(id);
+          {({ id, dragHandleProps, height, width }) => {
+            const { displayId, ...displayProps } = getDisplaySettings(id);
             const Component = getDisplayComponent(displayId);
             const state = this.getDisplayState(id);
             return (
               <Component
+                gmp={gmp}
                 {...other}
                 {...displayProps}
                 dragHandleProps={dragHandleProps}
@@ -311,7 +312,7 @@ export class Dashboard extends React.Component {
                   this.handleSetDisplayState(id, stateFunc)
                 }
                 onFilterIdChanged={filterId =>
-                  this.handleUpdateDisplay(id, {filterId})
+                  this.handleUpdateDisplay(id, { filterId })
                 }
                 onInteractive={this.props.onInteraction}
                 onRemoveClick={() => this.handleRemoveDisplay(id)}
@@ -354,7 +355,7 @@ Dashboard.propTypes = {
   onInteraction: PropTypes.func,
 };
 
-const mapStateToProps = (rootState, {id}) => {
+const mapStateToProps = (rootState, { id }) => {
   const settingsSelector = DashboardSettings(rootState);
   const settings = settingsSelector.getById(id);
   const error = settingsSelector.getError(id);
@@ -366,7 +367,7 @@ const mapStateToProps = (rootState, {id}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {gmp}) => ({
+const mapDispatchToProps = (dispatch, { gmp }) => ({
   loadSettings: (id, defaults) => dispatch(loadSettings(gmp)(id, defaults)),
   saveSettings: (id, settings) => dispatch(saveSettings(gmp)(id, settings)),
   setDefaultSettings: (id, settings) =>

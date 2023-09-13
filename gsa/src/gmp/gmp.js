@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {isDefined} from 'gmp/utils/identity';
-import {isEmpty} from 'gmp/utils/string';
+import { isDefined } from 'gmp/utils/identity';
+import { isEmpty } from 'gmp/utils/string';
 
 import logger from 'gmp/log';
 
@@ -61,16 +61,18 @@ import 'gmp/commands/trashcan';
 import 'gmp/commands/users';
 import 'gmp/commands/vulns';
 import 'gmp/commands/wizard';
+import 'gmp/commands/djangocommand'
 
 import GmpHttp from 'gmp/http/gmp';
-import {buildServerUrl, buildUrlParams} from 'gmp/http/utils';
+import { buildServerUrl, buildUrlParams } from 'gmp/http/utils';
 import DefaultTransform from 'gmp/http/transform/default';
 
-import {getCommands} from 'gmp/command';
+import { getCommands } from 'gmp/command';
 import LoginCommand from 'gmp/commands/login';
+import DjangoLoginCommand from 'gmp/commands/djangologin';
 
-import {setLocale} from 'gmp/locale/lang';
-import {BROWSER_LANGUAGE} from 'gmp/locale/languages';
+import { setLocale } from 'gmp/locale/lang';
+import { BROWSER_LANGUAGE } from 'gmp/locale/languages';
 
 const log = logger.getLogger('gmp');
 
@@ -85,8 +87,8 @@ class Gmp {
     this.log = logger;
 
     this.http = isDefined(http) ? http : new GmpHttp(this.settings);
-
     this._login = new LoginCommand(this.http);
+    this._djangoLogin = new DjangoLoginCommand();
 
     this._logoutListeners = [];
 
@@ -105,9 +107,20 @@ class Gmp {
     }
   }
 
+  djangoLogin(username, password) {
+    return this._djangoLogin.login(username, password).then(login => {
+      console.log('login', login);
+      const { token } = login;
+      this.settings.djangotoken = token;
+      return {
+        token,
+      };
+    });
+  }
+
   login(username, password) {
     return this._login.login(username, password).then(login => {
-      const {token, timezone, locale, sessionTimeout} = login;
+      const { token, timezone, locale, sessionTimeout } = login;
 
       this.settings.username = username;
       this.settings.timezone = timezone;
@@ -124,10 +137,10 @@ class Gmp {
     });
   }
 
-  doLogout() {
+  doLogout() { // need to add django section
     if (this.isLoggedIn()) {
       const url = this.buildUrl('logout');
-      const args = {token: this.settings.token};
+      const args = { token: this.settings.token };
 
       const promise = this.http
         .request('get', {
@@ -164,9 +177,9 @@ class Gmp {
     this._logoutListeners.push(listener);
 
     return () =>
-      (this._logoutListeners = this._logoutListeners.filter(
-        l => l !== listener,
-      ));
+    (this._logoutListeners = this._logoutListeners.filter(
+      l => l !== listener,
+    ));
   }
 
   buildUrl(path, params, anchor) {

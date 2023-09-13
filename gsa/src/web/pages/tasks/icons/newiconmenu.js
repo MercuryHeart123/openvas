@@ -32,7 +32,7 @@ const NewIconMenu = ({ capabilities, onNewClick, onNewContainerClick }) => {
     return (
       <IconMenu icon={<NewIcon />} onClick={onNewClick}>
         <MenuEntry title={_('New Tasksssssss')} onClick={onNewClick} />
-        <MenuEntry
+        <MenuEntry // need to chnage ux/ui
           title={_('New Container Task')}
           onClick={onNewContainerClick}
         />

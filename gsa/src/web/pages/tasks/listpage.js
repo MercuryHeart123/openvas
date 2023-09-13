@@ -19,7 +19,7 @@ import React from 'react';
 
 import _ from 'gmp/locale';
 
-import {TASKS_FILTER_FILTER} from 'gmp/models/filter';
+import { TASKS_FILTER_FILTER } from 'gmp/models/filter';
 
 import PropTypes from 'web/utils/proptypes';
 import withCapabilities from 'web/utils/withCapabilities';
@@ -52,7 +52,7 @@ import MenuEntry from 'web/components/menu/menuentry';
 import NewIconMenu from './icons/newiconmenu';
 
 import TaskComponent from './component';
-import TaskDashboard, {TASK_DASHBOARD_ID} from './dashboard';
+import TaskDashboard, { TASK_DASHBOARD_ID } from './dashboard';
 import TaskFilterDialog from './filterdialog';
 import Table from './table';
 
@@ -214,7 +214,7 @@ Page.propTypes = {
   onInteraction: PropTypes.func.isRequired,
 };
 
-export const taskReloadInterval = ({entities = []}) =>
+export const taskReloadInterval = ({ entities = [] }) =>
   entities.some(task => task.isActive())
     ? USE_DEFAULT_RELOAD_INTERVAL_ACTIVE
     : USE_DEFAULT_RELOAD_INTERVAL;

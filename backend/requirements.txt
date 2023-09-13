@@ -1,0 +1,6 @@
+python-nmap
+gvm-tools
+django
+netifaces
+xmltodict
+django-cors-headers

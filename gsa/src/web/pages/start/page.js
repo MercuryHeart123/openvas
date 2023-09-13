@@ -17,17 +17,17 @@
  */
 import React from 'react';
 
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 import memoize from 'memoize-one';
 
 import styled from 'styled-components';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import compose from 'web/utils/compose';
 import PropTypes from 'web/utils/proptypes';
@@ -41,7 +41,7 @@ import {
 import getDashboardSettings, {
   DashboardSetting,
 } from 'web/store/dashboard/settings/selectors';
-import {renewSessionTimeout} from 'web/store/usersettings/actions';
+import { renewSessionTimeout } from 'web/store/usersettings/actions';
 
 import {
   addDisplayToSettings,
@@ -74,7 +74,7 @@ import Tabs from 'web/components/tab/tabs';
 
 import Dashboard from './dashboard';
 import ConfirmRemoveDialog from './confirmremovedialog';
-import NewDashboardDialog, {DEFAULT_DISPLAYS} from './newdashboarddialog';
+import NewDashboardDialog, { DEFAULT_DISPLAYS } from './newdashboarddialog';
 import EditDashboardDialog from './editdashboarddialog';
 import Divider from 'web/components/layout/divider';
 
@@ -188,12 +188,12 @@ class StartPage extends React.Component {
       return;
     }
 
-    const {settings = {}} = this.props;
-    const {byId = {}, defaults = {}} = settings;
+    const { settings = {} } = this.props;
+    const { byId = {}, defaults = {} } = settings;
 
-    const byIdCopy = {...byId};
+    const byIdCopy = { ...byId };
     delete byIdCopy[dashboardId];
-    const defaultsCopy = {...defaults};
+    const defaultsCopy = { ...defaults };
     delete defaultsCopy[dashboardId];
 
     this.setState({
@@ -216,15 +216,15 @@ class StartPage extends React.Component {
   }
 
   handleCloseConfirmRemoveDashboardDialog() {
-    this.setState({showConfirmRemoveDialog: false});
+    this.setState({ showConfirmRemoveDialog: false });
   }
 
   closeNewDashboardDialog() {
-    this.setState({showNewDashboardDialog: false});
+    this.setState({ showNewDashboardDialog: false });
   }
 
   handleOpenNewDashboardDialog() {
-    this.setState({showNewDashboardDialog: true});
+    this.setState({ showNewDashboardDialog: true });
   }
 
   handleCloseNewDashboardDialog() {
@@ -239,11 +239,11 @@ class StartPage extends React.Component {
   }
 
   handleCloseEditDashboardDialog() {
-    this.setState({showEditDashboardDialog: false});
+    this.setState({ showEditDashboardDialog: false });
   }
 
   handleActivateTab(tab) {
-    this.setState({activeTab: tab});
+    this.setState({ activeTab: tab });
   }
 
   handleSaveDashboardSettings(dashboardId, settings) {
@@ -277,9 +277,9 @@ class StartPage extends React.Component {
     this.updateDashboardSettings(dashboardId, newSettings);
   }
 
-  handleAddNewDashboard({title, defaultDisplays = DEFAULT_DISPLAYS}) {
-    const {settings = {}} = this.props;
-    const {byId = {}} = settings;
+  handleAddNewDashboard({ title, defaultDisplays = DEFAULT_DISPLAYS }) {
+    const { settings = {} } = this.props;
+    const { byId = {} } = settings;
     const dashboards = this.getDashboards();
 
     const id = uuid();
@@ -302,12 +302,12 @@ class StartPage extends React.Component {
     this.closeNewDashboardDialog();
 
     // change to new dashboard tab
-    this.setState({activeTab: dashboards.length});
+    this.setState({ activeTab: dashboards.length });
   }
 
-  handleSaveEditDashboard({dashboardId, dashboardTitle}) {
-    this.updateDashboardSettings(dashboardId, {title: dashboardTitle});
-    this.setState({showEditDashboardDialog: false});
+  handleSaveEditDashboard({ dashboardId, dashboardTitle }) {
+    this.updateDashboardSettings(dashboardId, { title: dashboardTitle });
+    this.setState({ showEditDashboardDialog: false });
   }
 
   handleResetDashboards() {
@@ -328,7 +328,7 @@ class StartPage extends React.Component {
   }
 
   updateDashboardSettings(dashboardId, newSettings) {
-    const {byId = {}} = this.props.settings;
+    const { byId = {} } = this.props.settings;
     const oldSettings = this.getDashboardSettings(dashboardId);
 
     this.saveSettings({
@@ -343,7 +343,7 @@ class StartPage extends React.Component {
   }
 
   updateDashboardDefaults(dashboardId, newDefaults) {
-    const {defaults = {}} = this.props.settings;
+    const { defaults = {} } = this.props.settings;
     this.saveSettings({
       defaults: {
         ...defaults,
@@ -353,19 +353,19 @@ class StartPage extends React.Component {
   }
 
   getDashboards() {
-    const {settings = {}} = this.props;
-    const {dashboards = [], byId = {}} = settings;
+    const { settings = {} } = this.props;
+    const { dashboards = [], byId = {} } = settings;
     return dashboards.filter(id => isDefined(byId[id]));
   }
 
   getDashboardSettings(dashboardId) {
-    const {settings = {}} = this.props;
+    const { settings = {} } = this.props;
     const selector = this.getDashboardSelector(settings);
     return selector.getById(dashboardId);
   }
 
   getDashboardDefaults(dashboardId) {
-    const {settings = {}} = this.props;
+    const { settings = {} } = this.props;
     const selector = this.getDashboardSelector(settings);
     return selector.getDefaultsById(dashboardId);
   }
@@ -377,15 +377,15 @@ class StartPage extends React.Component {
 
   getDashboardDisplayIds(dashboardId) {
     const dashboardSettings = this.getDashboardSettings(dashboardId);
-    const {rows = []} = dashboardSettings;
+    const { rows = [] } = dashboardSettings;
     return rows.map(row => {
-      const {items = []} = row;
+      const { items = [] } = row;
       return items.map(item => item.displayId);
     });
   }
 
   render() {
-    const {isLoading} = this.props;
+    const { isLoading, gmp } = this.props;
     const {
       activeTab,
       editDashboardId,
@@ -471,8 +471,9 @@ class StartPage extends React.Component {
                     return (
                       <TabPanel key={id}>
                         <SubscriptionProvider>
-                          {({notify}) => (
+                          {({ notify }) => (
                             <Dashboard
+                              gmp={gmp}
                               settings={settings}
                               id={id}
                               loadSettings={this.handleLoadDashboardSettings}
@@ -551,7 +552,7 @@ const mapStateToProps = rootState => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {gmp}) => ({
+const mapDispatchToProps = (dispatch, { gmp }) => ({
   loadSettings: (id, defaults) => dispatch(loadSettings(gmp)(id, defaults)),
   saveSettings: (id, settings) => dispatch(saveSettings(gmp)(id, settings)),
   renewSessionTimeout: () => dispatch(renewSessionTimeout(gmp)()),
