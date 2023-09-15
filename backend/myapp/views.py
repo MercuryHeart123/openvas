@@ -8,8 +8,10 @@ def login(username, password):
     response = gvm_service.login(username, password)
     return response
 
-def getUpdate():
-    response = gvm_service.get_update()
+def getUpdate(token):
+    if(token == None and gvm_service.checkToken(token) == False):
+        return None
+    response = gvm_service.get_update(token)
     return response
 
 def getSingleTask(taskId):

@@ -52,21 +52,22 @@ class StatusDisplay extends React.Component {
                         // horizontal
                         gmp={gmp}
                         height={height}
-                        data={{
-                            nvt: {
-                                label: 'NVT',
-                                data: data.nvt,
+                        // data={{
+                        //     nvt: {
+                        //         label: 'NVT',
+                        //         data: data.nvt,
 
-                            },
-                            cve: {
-                                label: 'CVE',
-                                data: data.cve,
-                            },
-                            cert: {
-                                label: 'CERT',
-                                data: data.cert,
-                            },
-                        }}
+                        //     },
+                        //     cve: {
+                        //         label: 'CVE',
+                        //         data: data.cve,
+                        //     },
+                        //     cert: {
+                        //         label: 'CERT',
+                        //         data: data.cert,
+                        //     },
+                        // }}
+                        data={data}
                         xLabel={'xLabel'}
                         yLabel={'yLabel'}
                         onDataClick={

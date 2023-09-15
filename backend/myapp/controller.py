@@ -78,26 +78,27 @@ def loginController(request):
             else:
                 raise ("taskId is required")
         elif request.method == 'GET' and request.GET.get('cmd', '') == 'get_updates':
-            logger.info(request.GET.get('token', ''))
-            root = Element('envelope')
-            child = SubElement(root, "version")
+            result = views.getUpdate(request.GET.get('token', ''))
+            # logger.info(request.GET.get('token', ''))
+            # root = Element('envelope')
+            # child = SubElement(root, "version")
 
-            child.text = "22.06.0"
-            nvts = SubElement(root, "nvts")
-            cves = SubElement(root, "cves")
-            certs = SubElement(root, "certs")
-            for i in range(0, 7):
-                nvt = SubElement(nvts, "nvt")
-                nvt.attrib['oid'] = f"{i}"
-                nvt.text = f"{random.randint(0, 100)}"
-                cve = SubElement(cves, "cve")
-                cve.attrib['oid'] = f"{i}"
-                cve.text = f"{random.randint(0, 100)}"
-                cert = SubElement(certs, "cert")
-                cert.attrib['oid'] = f"{i}"
-                cert.text = f"{random.randint(0, 100)}"
+            # child.text = "22.06.0"
+            # nvts = SubElement(root, "nvts")
+            # cves = SubElement(root, "cves")
+            # certs = SubElement(root, "certs")
+            # for i in range(0, 7):
+            #     nvt = SubElement(nvts, "nvt")
+            #     nvt.attrib['oid'] = f"{i}"
+            #     nvt.text = f"{random.randint(0, 100)}"
+            #     cve = SubElement(cves, "cve")
+            #     cve.attrib['oid'] = f"{i}"
+            #     cve.text = f"{random.randint(0, 100)}"
+            #     cert = SubElement(certs, "cert")
+            #     cert.attrib['oid'] = f"{i}"
+            #     cert.text = f"{random.randint(0, 100)}"
 
-            result = tostring(root).decode('utf-8')
+            result = tostring(result).decode('utf-8')
             statusCode = 200
         else:
             raise BaseException("Method not allowed")

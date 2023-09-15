@@ -51,37 +51,39 @@ const dateTranfroms = (daypast) => {
 const labels = Array.from(Array(7).keys()).map((day) => dateTranfroms(day)).reverse();
 
 export default function BarChart(props) {
-    const { gmp } = props;
+    const { gmp, data } = props;
     const [rawData, setRawData] = useState({});
     useEffect(() => {
-        // console.log(gmp);
-        gmp.django.get_updates(gmp.settings.djangotoken).then((res) => {
-            // setRawData(res.data);
-            console.log(res.data);
-        });
+        console.log(data);
+        // gmp.django.get_updates(gmp.settings.djangotoken).then((res) => {
+        //     setRawData(res.data);
+
+        // });
     }, []);
 
-    let data = {
-        labels,
-        datasets: [
-            {
-                label: 'NVT',
-                data: isDefined(rawData.nvts) ? rawData.nvts.nvt.map((nvt) => nvt.__text) : [],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            },
-            {
-                label: 'CVE',
-                data: isDefined(rawData.cves) ? rawData.cves.cve.map((cve) => cve.__text) : [],
-                backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-            {
-                label: 'CERT',
-                data: isDefined(rawData.certs) ? rawData.certs.cert.map((cert) => cert.__text) : [],
-                backgroundColor: 'rgba(17, 171, 81, 0.5)',
-            },
-        ],
-    };
-    return <Bar options={options} data={data} />;
+    // let data = {
+    //     labels,
+    //     datasets: [
+    //         {
+    //             label: 'NVT',
+    //             data: isDefined(rawData.nvts) ? rawData.nvts.nvt.map((nvt) => nvt.__text) : [],
+    //             backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    //         },
+    //         {
+    //             label: 'CVE',
+    //             data: isDefined(rawData.cves) ? rawData.cves.cve.map((cve) => cve.__text) : [],
+    //             backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    //         },
+    //         {
+    //             label: 'CPE',
+    //             data: isDefined(rawData.certs) ? rawData.cpes.cpe.map((cert) => cert.__text) : [],
+    //             backgroundColor: 'rgba(17, 171, 81, 0.5)',
+    //         },
+    //     ],
+    // };
+    return <div>
+        1234
+    </div>;
 }
 
 

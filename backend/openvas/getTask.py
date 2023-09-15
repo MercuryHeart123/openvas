@@ -5,6 +5,8 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 import logging
 import uuid
 from xml.etree import cElementTree as ET
+import random
+import datetime
 
 class GvmService:
     def __init__(self, path='/run/gvmd/gvmd.sock'):
@@ -44,7 +46,48 @@ class GvmService:
             self.logger.error(e)
             self.gmps[genUid] = None
 
+    def checkToken(self, token):
+        self.logger.info('check token: ' + token)
+        for key in self.gmps.keys():
+            if key == token:
+                return True
+        return False
+    
+    def get_formatted_date(self, day):
+        current_date = datetime.date.today()
+        daypass = current_date - datetime.timedelta(days=day)
+        formatted_daypass = daypass.strftime("%Y-%m-%d")
+        return formatted_daypass
+        
+    def get_update(self, token):
+        self.logger.info('get update with token: ' + token)
+        root = Element('envelope')
+        child = SubElement(root, "version")
 
+        child.text = "22.06.0"
+        nvts = SubElement(root, "nvts")
+        cves = SubElement(root, "cves")
+        cpes = SubElement(root, "cpes")
+        # for i in range(6, -1, -1):
+            # text = f"modified>{self.get_formatted_date(i)} and modified<{self.get_formatted_date(i-1)}"
+        text = "modified>2023-09-08 and modified<2023-09-09"
+        nvt = SubElement(nvts, "nvt")
+        resultnvts = self.gmps[token].get_nvts(filter_string=text)
+        xmlnvts = ET.fromstring(resultnvts)
+        nvt.text = xmlnvts.find("info_count").find("filtered").text
+        
+        cve = SubElement(cves, "cve")
+        resultcves = self.gmps[token].get_cves(filter_string=text)
+        xmlcves = ET.fromstring(resultcves)
+        cve.text = xmlcves.find("info_count").find("filtered").text
+        
+        cpe = SubElement(cpes, "cpe")
+        resultcpes = self.gmps[token].get_cpes(filter_string=text)
+        xmlcpes = ET.fromstring(resultcpes)
+        cpe.text = xmlcpes.find("info_count").find("filtered").text
+        # result = self.gmps[token].get_version()
+        return root
+    
     def authen(self, username, password, genUid):
         try:
             self.logger.info('authening to gvmd') 

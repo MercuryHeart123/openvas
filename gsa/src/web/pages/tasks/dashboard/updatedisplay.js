@@ -34,7 +34,7 @@ import DataTableDisplay from 'web/components/dashboard/display/datatabledisplay'
 
 import update from 'web/components/dashboard/display/update/update'; // eslint-disable-line max-len
 
-import { TaskStatusLoader } from './loaders';
+import { TasksSchedulesLoader, TasksSeverityLoader } from './loaders';
 
 import Theme from 'web/utils/theme.js';
 
@@ -111,13 +111,13 @@ export const UpdateDisplay = createDisplay({
     dataTransform: transformStatusData,
     displayComponent: update,
     displayId: 'update-today',
-    customeData: { title: getFormatedDate() },
+    // customeData: { title: getFormatedDate() },
     title: ({ data: tdata }) =>
 
-        _('update by day: {{day}}', { day: tdata.title })
+        _('update by day: {{day}}', { day: tdata.total })
     ,
     filtersFilter: TASKS_FILTER_FILTER,
-    loaderComponent: TaskStatusLoader,
+    loaderComponent: TasksSchedulesLoader,
 });
 
 

@@ -141,12 +141,13 @@ class DataDisplay extends React.Component {
   }
 
   static getTransformedData(props) {
-    const { data, customeData, dataTransform, ...other } = props;
+    const { data, dataTransform, ...other } = props;
 
     const tprops = excludeObjectProps(other, ownProps);
-    if (isDefined(customeData)) {
-      return customeData;
-    }
+    // if (isDefined(customeData)) {
+    //   return customeData;
+    // }
+    console.log(data)
     return isDefined(dataTransform) ? dataTransform(data, tprops) : data;
   }
 
@@ -264,7 +265,7 @@ class DataDisplay extends React.Component {
     const { data: transformedData, title } = this.state;
     let {
       data: originalData, // todo fix this
-      customeData,
+      // customeData,
       height,
       width,
       isLoading,
@@ -288,7 +289,7 @@ class DataDisplay extends React.Component {
     height = height - DISPLAY_HEADER_HEIGHT;
     width = width - DISPLAY_BORDER_WIDTH;
 
-    isLoading = isLoading && !isDefined(customeData || originalData); // fix
+    isLoading = isLoading && !isDefined(originalData); // fix
 
     const otherProps = excludeObjectProps(props, ownProps);
     const showCsvDownload = isDefined(dataRow) && isDefined(dataTitles);

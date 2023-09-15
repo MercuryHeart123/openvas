@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {isDefined} from './utils/identity';
+import { isDefined } from './utils/identity';
 
 export const DEFAULT_RELOAD_INTERVAL = 15 * 1000; // fifteen seconds
 export const DEFAULT_RELOAD_INTERVAL_ACTIVE = 3 * 1000; // three seconds
@@ -141,6 +141,14 @@ class GmpSettings {
 
   set timezone(value) {
     set(this.storage, 'timezone', value);
+  }
+
+  get djangotoken() {
+    return this.storage.djangotoken;
+  }
+
+  set djangotoken(value) {
+    set(this.storage, 'djangotoken', value);
   }
 
   get timezone() {
