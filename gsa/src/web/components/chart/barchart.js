@@ -1,89 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { isDefined } from 'gmp/utils/identity';
+import React from 'react';
+import styled from 'styled-components';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-);
+// const dateTranfroms = (daypast) => {
+//     // Get the current date
+//     var currentDate = new Date();
 
-export const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
-        },
-        title: {
-            display: true,
-            text: 'Chart.js Bar Chart',
-        },
-    },
-};
-const dateTranfroms = (daypast) => {
-    // Get the current date
-    var currentDate = new Date();
+//     // Subtract 7 days
+//     currentDate.setDate(currentDate.getDate() - daypast);
 
-    // Subtract 7 days
-    currentDate.setDate(currentDate.getDate() - daypast);
+//     // Format the date as "dd/mm/yyyy"
+//     var day = currentDate.getDate();
+//     var month = currentDate.getMonth() + 1; // Months are zero-based
+//     var year = currentDate.getFullYear() + 543;
 
-    // Format the date as "dd/mm/yyyy"
-    var day = currentDate.getDate();
-    var month = currentDate.getMonth() + 1; // Months are zero-based
-    var year = currentDate.getFullYear() + 543;
+//     var formattedDate = day + '/' + month + '/' + year;
+//     return formattedDate;
 
-    var formattedDate = day + '/' + month + '/' + year;
-    return formattedDate;
-
-}
-const labels = Array.from(Array(7).keys()).map((day) => dateTranfroms(day)).reverse();
-
+// }
+// const labels = Array.from(Array(7).keys()).map((day) => dateTranfroms(day)).reverse();
+const TextDisplay = styled.div`
+    font-size: 5rem;
+    color : green;
+    text-align: center;
+`
 export default function BarChart(props) {
-    const { gmp, data } = props;
-    const [rawData, setRawData] = useState({});
-    useEffect(() => {
-        console.log(data);
-        // gmp.django.get_updates(gmp.settings.djangotoken).then((res) => {
-        //     setRawData(res.data);
-
-        // });
-    }, []);
-
-    // let data = {
-    //     labels,
-    //     datasets: [
-    //         {
-    //             label: 'NVT',
-    //             data: isDefined(rawData.nvts) ? rawData.nvts.nvt.map((nvt) => nvt.__text) : [],
-    //             backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    //         },
-    //         {
-    //             label: 'CVE',
-    //             data: isDefined(rawData.cves) ? rawData.cves.cve.map((cve) => cve.__text) : [],
-    //             backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    //         },
-    //         {
-    //             label: 'CPE',
-    //             data: isDefined(rawData.certs) ? rawData.cpes.cpe.map((cert) => cert.__text) : [],
-    //             backgroundColor: 'rgba(17, 171, 81, 0.5)',
-    //         },
-    //     ],
-    // };
-    return <div>
-        1234
-    </div>;
+    const { data } = props;
+    return <TextDisplay>
+        {data.title}: {data.total}
+    </TextDisplay>;
 }
 
 

@@ -17,7 +17,7 @@
  */
 import React from 'react';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import PropTypes from 'web/utils/proptypes';
 import withFilterSelection from './withFilterSelection';
@@ -29,12 +29,13 @@ const createDisplay = ({
   displayName,
   filtersFilter,
   loaderComponent: Loader,
+  title,
   ...other
 }) => {
-  const DisplayComponent = ({filter, ...props}) => (
+  const DisplayComponent = ({ filter, ...props }) => (
     <Loader filter={filter}>
       {loaderProps => (
-        <Display {...other} {...loaderProps} {...props} filter={filter}>
+        <Display {...other} {...loaderProps} {...props} title={title} filter={filter}>
           {isDefined(Chart)
             ? displayProps => <Chart {...displayProps} />
             : undefined}

@@ -17,24 +17,23 @@
  */
 import React from 'react';
 
-import Filter from 'gmp/models/filter';
-import FilterTerm from 'gmp/models/filter/filterterm';
-
-import { isDefined } from 'gmp/utils/identity';
-
-import BarChart from 'web/components/chart/barchart';
 import PropTypes from 'web/utils/proptypes';
-
+import styled from 'styled-components';
 import DataDisplay from '../datadisplay';
 import { renderDonutChartIcons } from '../datadisplayicons';
+import { isObject } from 'gmp/utils/identity';
 
+const TextDisplay = styled.div`
+    font-size: 2rem;
+    text-align: center;
+`
 class StatusDisplay extends React.Component {
     constructor(...args) {
         super(...args);
     }
 
     render() {
-        const { filter, onFilterChanged, gmp, ...props } = this.props;
+        const { filter, onFilterChanged, ...props } = this.props;
         return (
             <DataDisplay
                 {...props}
@@ -44,36 +43,19 @@ class StatusDisplay extends React.Component {
                 filter={filter}
                 icons={renderDonutChartIcons}
             >
-                {({ width, height, data, svgRef }) => (
-                    <BarChart
-                        svgRef={svgRef}
-                        showLegend={false}
-                        width={width}
-                        // horizontal
-                        gmp={gmp}
-                        height={height}
-                        // data={{
-                        //     nvt: {
-                        //         label: 'NVT',
-                        //         data: data.nvt,
+                {({ data }) => (
+                    <>
+                        <TextDisplay>
+                            {data.total == 0 ? "Nothing update today" : data.map((item, index) => {
+                                if (isObject(item)) {
+                                    return <div>
+                                        {item.filterValue} : {item.value}
+                                    </div>
+                                }
+                            })}
+                        </TextDisplay>
+                    </>
 
-                        //     },
-                        //     cve: {
-                        //         label: 'CVE',
-                        //         data: data.cve,
-                        //     },
-                        //     cert: {
-                        //         label: 'CERT',
-                        //         data: data.cert,
-                        //     },
-                        // }}
-                        data={data}
-                        xLabel={'xLabel'}
-                        yLabel={'yLabel'}
-                        onDataClick={
-                            isDefined(onFilterChanged) ? this.handleDataClick : undefined
-                        }
-                    />
                 )}
             </DataDisplay>
         );

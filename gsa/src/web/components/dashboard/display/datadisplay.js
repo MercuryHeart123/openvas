@@ -147,7 +147,6 @@ class DataDisplay extends React.Component {
     // if (isDefined(customeData)) {
     //   return customeData;
     // }
-    console.log(data)
     return isDefined(dataTransform) ? dataTransform(data, tprops) : data;
   }
 

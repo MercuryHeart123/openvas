@@ -22,7 +22,7 @@ import { interpolateHcl } from 'd3-interpolate';
 
 import { _, _l } from 'gmp/locale/lang';
 
-import { TASKS_FILTER_FILTER } from 'gmp/models/filter';
+import { UPDATE_TODAY } from 'gmp/models/filter';
 import { getTranslatableTaskStatus, TASK_STATUS } from 'gmp/models/task';
 
 import { registerDisplay } from 'web/components/dashboard/registry';
@@ -34,7 +34,7 @@ import DataTableDisplay from 'web/components/dashboard/display/datatabledisplay'
 
 import update from 'web/components/dashboard/display/update/update'; // eslint-disable-line max-len
 
-import { TasksSchedulesLoader, TasksSeverityLoader } from './loaders';
+import { TasksSchedulesLoader, TasksCveLoader } from './loaders';
 
 import Theme from 'web/utils/theme.js';
 
@@ -112,12 +112,12 @@ export const UpdateDisplay = createDisplay({
     displayComponent: update,
     displayId: 'update-today',
     // customeData: { title: getFormatedDate() },
-    title: ({ data: tdata }) =>
+    title: () =>
 
-        _('update by day: {{day}}', { day: tdata.total })
+        _('Feed update today: {{day}}', { day: getFormatedDate() })
     ,
-    filtersFilter: TASKS_FILTER_FILTER,
-    loaderComponent: TasksSchedulesLoader,
+    filtersFilter: UPDATE_TODAY,
+    loaderComponent: TasksCveLoader,
 });
 
 

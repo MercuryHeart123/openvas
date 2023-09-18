@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import { UPDATE_TODAY } from 'gmp/models/filter';
 
 import Loader, {
   loadFunc,
@@ -24,22 +25,24 @@ import Loader, {
 
 export const TASKS_STATUS = 'tasks-status';
 export const TASKS_SEVERITY = 'tasks-severity';
+export const CVES_SEVERITY = 'cves-severity';
+
 export const TASKS_SCHEDULES = 'tasks-schedules';
 export const TASKS_HIGH_RESULTS = 'tasks-high-results';
 
 export const tasksStatusLoader = loadFunc(
-  ({gmp, filter}) => gmp.tasks.getStatusAggregates({filter}).then(r => r.data),
+  ({ gmp, filter }) => gmp.tasks.getStatusAggregates({ filter }).then(r => r.data),
   TASKS_STATUS,
 );
 
 export const tasksSeverityLoader = loadFunc(
-  ({gmp, filter}) =>
-    gmp.tasks.getSeverityAggregates({filter}).then(r => r.data),
+  ({ gmp, filter }) =>
+    gmp.tasks.getSeverityAggregates({ filter }).then(r => r.data),
   TASKS_SEVERITY,
 );
 
 export const tasksSchedulesLoader = loadFunc(
-  ({gmp, filter}) =>
+  ({ gmp, filter }) =>
     gmp.tasks
       .getAll({
         filter,
@@ -51,10 +54,20 @@ export const tasksSchedulesLoader = loadFunc(
   TASKS_SCHEDULES,
 );
 
+export const tasksCveLoader = loadFunc(
+  ({ gmp, filter }) => {
+    return gmp.tasks.getCveAggregates({ filter }).then(r => {
+      console.log(r);
+      return r
+    }
+    )
+  }
+);
+
 const MAX_HIGH_RESULT_TASKS_COUNT = 10;
 
 export const tasksHighResultsLoader = loadFunc(
-  ({gmp, filter}) =>
+  ({ gmp, filter }) =>
     gmp.tasks
       .getHighResultsAggregates({
         filter,
@@ -64,7 +77,7 @@ export const tasksHighResultsLoader = loadFunc(
   TASKS_HIGH_RESULTS,
 );
 
-export const TaskStatusLoader = ({children, filter}) => (
+export const TaskStatusLoader = ({ children, filter }) => (
   <Loader
     dataId={TASKS_STATUS}
     filter={filter}
@@ -77,7 +90,7 @@ export const TaskStatusLoader = ({children, filter}) => (
 
 TaskStatusLoader.propTypes = loaderPropTypes;
 
-export const TasksSchedulesLoader = ({children, filter}) => (
+export const TasksSchedulesLoader = ({ children, filter }) => (
   <Loader
     dataId={TASKS_SCHEDULES}
     filter={filter}
@@ -90,7 +103,7 @@ export const TasksSchedulesLoader = ({children, filter}) => (
 
 TasksSchedulesLoader.propTypes = loaderPropTypes;
 
-export const TasksSeverityLoader = ({children, filter}) => (
+export const TasksSeverityLoader = ({ children, filter }) => (
   <Loader
     dataId={TASKS_SEVERITY}
     filter={filter}
@@ -100,10 +113,21 @@ export const TasksSeverityLoader = ({children, filter}) => (
     {children}
   </Loader>
 );
+export const TasksCveLoader = ({ children }) => (
+
+  <Loader
+    dataId={CVES_SEVERITY}
+    filter={UPDATE_TODAY}
+    load={tasksCveLoader}
+    subscriptions={['tasks.timer', 'tasks.changed']}
+  >
+    {children}
+  </Loader>
+);
 
 TasksSeverityLoader.propTypes = loaderPropTypes;
 
-export const TasksHighResultsLoader = ({children, filter}) => (
+export const TasksHighResultsLoader = ({ children, filter }) => (
   <Loader
     dataId={TASKS_HIGH_RESULTS}
     filter={filter}

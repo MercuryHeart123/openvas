@@ -17,9 +17,9 @@
  */
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {isDefined, hasValue} from 'gmp/utils/identity';
+import { isDefined, hasValue } from 'gmp/utils/identity';
 
 import compose from '../../../utils/compose';
 import withGmp from '../../../utils/withGmp';
@@ -39,14 +39,14 @@ export const loaderPropTypes = {
   filter: PropTypes.filter,
 };
 
-export const loadFunc = (func, id) => ({dataId = id, ...props}) => (
+export const loadFunc = (func, id) => ({ dataId = id, ...props }) => (
   dispatch,
   getState,
 ) => {
   const rootState = getState();
   const state = getDashboardData(rootState);
 
-  const {filter} = props;
+  const { filter } = props;
 
   if (state.getIsLoading(dataId, filter)) {
     // we are already loading data
@@ -74,7 +74,7 @@ class Loader extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {data} = props;
+    const { data } = props;
     if (isDefined(data)) {
       // Only update data if data is set and keep latest set data in state.
 
@@ -96,7 +96,7 @@ class Loader extends React.Component {
   }
 
   componentDidMount() {
-    const {subscribe, subscriptions = [], data} = this.props;
+    const { subscribe, subscriptions = [], data } = this.props;
 
     if (!hasValue(data)) {
       // only call load if we don't have data yet
@@ -125,9 +125,9 @@ class Loader extends React.Component {
   }
 
   render() {
-    const {children, isLoading} = this.props;
-    const {data} = this.state;
-    return isDefined(children) && children({data, isLoading});
+    const { children, isLoading } = this.props;
+    const { data } = this.state;
+    return isDefined(children) && children({ data, isLoading });
   }
 }
 
@@ -142,7 +142,7 @@ Loader.propTypes = {
   subscriptions: PropTypes.arrayOf(PropTypes.string),
 };
 
-const mapStateToProps = (rootState, {dataId, filter}) => {
+const mapStateToProps = (rootState, { dataId, filter }) => {
   const state = getDashboardData(rootState);
   return {
     data: state.getData(dataId, filter),
@@ -150,7 +150,7 @@ const mapStateToProps = (rootState, {dataId, filter}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {load, ...props}) => ({
+const mapDispatchToProps = (dispatch, { load, ...props }) => ({
   load: () => dispatch(load(props)),
 });
 

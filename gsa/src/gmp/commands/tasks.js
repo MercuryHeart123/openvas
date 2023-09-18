@@ -19,7 +19,7 @@ import logger from 'gmp/log';
 
 import registerCommand from 'gmp/command';
 
-import {NO_VALUE} from 'gmp/parser';
+import { NO_VALUE } from 'gmp/parser';
 
 import Task, {
   HOSTS_ORDERING_SEQUENTIAL,
@@ -36,7 +36,7 @@ export class TaskCommand extends EntityCommand {
     super(http, 'task', Task);
   }
 
-  start({id}) {
+  start({ id }) {
     log.debug('Starting task...');
 
     return this.httpPost({
@@ -45,7 +45,7 @@ export class TaskCommand extends EntityCommand {
     })
       .then(() => {
         log.debug('Started task');
-        return this.get({id});
+        return this.get({ id });
       })
       .catch(err => {
         log.error('An error occurred while starting the task', id, err);
@@ -53,7 +53,7 @@ export class TaskCommand extends EntityCommand {
       });
   }
 
-  stop({id}) {
+  stop({ id }) {
     log.debug('Stopping task');
 
     return this.httpPost({
@@ -62,7 +62,7 @@ export class TaskCommand extends EntityCommand {
     })
       .then(() => {
         log.debug('Stopped task');
-        return this.get({id});
+        return this.get({ id });
       })
       .catch(err => {
         log.error('An error occurred while stopping the task', id, err);
@@ -70,14 +70,14 @@ export class TaskCommand extends EntityCommand {
       });
   }
 
-  resume({id}) {
+  resume({ id }) {
     return this.httpPost({
       cmd: 'resume_task',
       id,
     })
       .then(() => {
         log.debug('Resumed task');
-        return this.get({id});
+        return this.get({ id });
       })
       .catch(err => {
         log.error('An error occurred while resuming the task', id, err);
@@ -138,7 +138,7 @@ export class TaskCommand extends EntityCommand {
   }
 
   createContainer(args) {
-    const {name, comment = ''} = args;
+    const { name, comment = '' } = args;
     log.debug('Creating container task', args);
     return this.action({
       cmd: 'create_container_task',
@@ -199,7 +199,7 @@ export class TaskCommand extends EntityCommand {
   }
 
   saveContainer(args) {
-    const {name, comment = '', in_assets = '1', id} = args;
+    const { name, comment = '', in_assets = '1', id } = args;
     log.debug('Saving container task', args);
     return this.action({
       cmd: 'save_container_task',
@@ -228,16 +228,16 @@ class TasksCommand extends EntitiesCommand {
   }
 
   get(params, options) {
-    params = {...params, usage_type: 'scan'};
+    params = { ...params, usage_type: 'scan' };
     return this.httpGet(params, options).then(response => {
-      const {entities, filter, counts} = this.getCollectionListFromRoot(
+      const { entities, filter, counts } = this.getCollectionListFromRoot(
         response.data,
       );
-      return response.set(entities, {filter, counts});
+      return response.set(entities, { filter, counts });
     });
   }
 
-  getSeverityAggregates({filter} = {}) {
+  getSeverityAggregates({ filter } = {}) {
     return this.getAggregates({
       aggregate_type: 'task',
       group_column: 'severity',
@@ -246,7 +246,7 @@ class TasksCommand extends EntitiesCommand {
     });
   }
 
-  getStatusAggregates({filter} = {}) {
+  getStatusAggregates({ filter } = {}) {
     return this.getAggregates({
       aggregate_type: 'task',
       group_column: 'status',
@@ -255,7 +255,119 @@ class TasksCommand extends EntitiesCommand {
     });
   }
 
-  getHighResultsAggregates({filter, max} = {}) {
+  // getCveAggregates({ filter } = {}) {
+  //   return this.getAggregates({
+  //     aggregate_type: 'cve',
+  //     group_column: 'modified',
+  //     filter,
+  //   });
+  // }
+
+  getCveAggregates({ filter } = {}) {
+    return new Promise((resolve, reject) => {
+      let allMap = { groups: [] };
+      this.getAggregates({
+        aggregate_type: 'cve',
+        group_column: 'modified',
+        filter,
+      }).then((response) => {
+        let cves = response.data;
+        allMap.group_column = cves.group_column;
+        allMap.column_info = cves.column_info;
+        // allMap = JSON.parse(JSON.stringify(cves));
+        // allMap.groups = [
+        //   {
+        //     value
+        //       :
+        //       "cpes",
+        //     count: 500, c_count: 500
+        //   },
+        //   ...cves.groups
+        // ]
+        let groups = cves.groups.map((cve) => {
+          return {
+            ...cve
+            ,
+            value: "cve"
+          }
+        });
+
+        allMap.groups = groups;
+        let cpePromise = new Promise((resolve, reject) => this.getAggregates({
+          aggregate_type: 'cpe',
+          group_column: 'modified',
+          filter,
+        }).then((response) => {
+          let cpes = response.data;
+          let groups = cpes.groups.map((cpe) => {
+            return {
+              ...cpe
+              ,
+              value: "cpe"
+            }
+          });
+          allMap.groups = allMap.groups.concat(groups);
+          let nvtsPromise = new Promise((resolve, reject) => this.getAggregates({
+            aggregate_type: 'nvt',
+            group_column: 'modified',
+            filter,
+          }).then((response) => {
+            let nvts = response.data;
+            let groups = nvts.groups.map((nvt) => {
+              return {
+                ...nvt
+                ,
+                value: "nvt"
+              }
+            });
+            allMap.groups = allMap.groups.concat(groups);
+            resolve(allMap);
+          }))
+          resolve(nvtsPromise);
+        }));
+        resolve(cpePromise);
+
+      }).catch((err) => {
+        reject(err);
+      });
+      console.log(allMap);
+
+
+      // this.getAggregates({
+      //   aggregate_type: 'cpe',
+      //   group_column: 'modified',
+      //   filter,
+      // }).then((response) => {
+      //   let cves = response.data.groups;
+      //   cves.forEach((cve) => {
+      //     allMap['cpes'] = cve.count;
+      //   });
+      // }).catch((err) => {
+      //   reject(err);
+      // });
+      // this.getAggregates({
+      //   aggregate_type: 'nvt',
+      //   group_column: 'modified',
+      //   filter,
+      // }).then((response) => {
+      //   let cves = response.data.groups;
+      //   cves.forEach((cve) => {
+      //     allMap['nvts'] = cve.count;
+      //   });
+      // }).catch((err) => {
+      //   reject(err);
+      // });
+      // resolve(allMap);
+
+    }
+
+
+
+    );
+
+  }
+
+  getHighResultsAggregates({ filter, max } = {}) {
     return this.getAggregates({
       filter,
       aggregate_type: 'task',

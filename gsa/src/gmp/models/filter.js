@@ -16,16 +16,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {isDefined, isString, isArray, hasValue} from 'gmp/utils/identity';
-import {forEach, map} from 'gmp/utils/array';
+import { isDefined, isString, isArray, hasValue } from 'gmp/utils/identity';
+import { forEach, map } from 'gmp/utils/array';
 
-import Model, {parseModelFromElement} from 'gmp/model';
+import Model, { parseModelFromElement } from 'gmp/model';
 
-import {setProperties} from 'gmp/parser';
+import { setProperties } from 'gmp/parser';
 
 import convert from './filter/convert';
-import FilterTerm, {AND} from './filter/filterterm';
-import {EXTRA_KEYWORDS} from './filter/keywords';
+import FilterTerm, { AND } from './filter/filterterm';
+import { EXTRA_KEYWORDS } from './filter/keywords';
 
 export const UNKNOWN_FILTER_ID = '0';
 
@@ -88,7 +88,7 @@ class Filter extends Model {
     return this.terms.length;
   }
 
-  setProperties({id, ...properties}) {
+  setProperties({ id, ...properties }) {
     // override setProperties to allow changing the id
     setProperties(properties, this);
     this.id = id;
@@ -113,7 +113,7 @@ class Filter extends Model {
 
     if (isDefined(ret.keywords)) {
       forEach(ret.keywords.keyword, keyword => {
-        const {relation, value, column: key} = keyword;
+        const { relation, value, column: key } = keyword;
 
         const converted = convert(key, value, relation);
 
@@ -157,7 +157,7 @@ class Filter extends Model {
       this.delete('sort');
     }
 
-    const {keyword} = term;
+    const { keyword } = term;
 
     if (!isDefined(keyword) || !this.has(keyword)) {
       this._addTerm(term);
@@ -224,7 +224,7 @@ class Filter extends Model {
   _mergeExtraKeywords(filter) {
     if (hasValue(filter)) {
       filter.forEach(term => {
-        const {keyword: key} = term;
+        const { keyword: key } = term;
         if (!isDefined(key) || !EXTRA_KEYWORDS.includes(key) || this.has(key)) {
           return;
         }
@@ -252,7 +252,7 @@ class Filter extends Model {
   _mergeNewKeywords(filter) {
     if (hasValue(filter)) {
       filter.forEach(term => {
-        const {keyword: key} = term;
+        const { keyword: key } = term;
         if (isDefined(key)) {
           !this.has(key) && this._addTerm(term);
         }
@@ -810,6 +810,7 @@ export const TICKETS_FILTER_FILTER = Filter.fromString('type=ticket');
 export const TLS_CERTIFICATES_FILTER_FILTER = Filter.fromString(
   'type=tls_certificate',
 );
+
 export const USERS_FILTER_FILTER = Filter.fromString('type=user');
 export const VULNS_FILTER_FILTER = Filter.fromString('type=vuln');
 
@@ -818,6 +819,21 @@ export const DEFAULT_FALLBACK_FILTER = Filter.fromString('sort=name first=1');
 export const RESET_FILTER = Filter.fromString('first=1');
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
+const getFormatedDate = (daypast = 0) => {
+  var currentDate = new Date();
+
+  // Subtract 7 days
+  currentDate.setDate(currentDate.getDate() + daypast);
+
+  // Format the date as "dd/mm/yyyy"
+  var day = currentDate.getDate();
+  var month = currentDate.getMonth() + 1; // Months are zero-based
+  var year = currentDate.getFullYear() + 543;
+
+  var formattedDate = day + '-' + month + '-' + year;
+  return formattedDate;
+}
+export const UPDATE_TODAY = Filter.fromString(`modified>${getFormatedDate()} and modified<${getFormatedDate(1)}`);
 
 export default Filter;
 
