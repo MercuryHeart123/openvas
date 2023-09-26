@@ -22,9 +22,9 @@ import styled from 'styled-components';
 
 import _ from 'gmp/locale';
 
-import {TASK_STATUS} from 'gmp/models/task';
+import { TASK_STATUS } from 'gmp/models/task';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import StatusBar from 'web/components/bar/statusbar';
 import ToolBar from 'web/components/bar/toolbar';
@@ -146,7 +146,7 @@ const PageContent = ({
   if (!hasReport && isDefined(reportError)) {
     return (
       <ErrorPanel
-        message={_('Error while loading Report {{reportId}}', {reportId})}
+        message={_('Error while loading Report {{reportId}}', { reportId })}
         error={reportError}
       />
     );

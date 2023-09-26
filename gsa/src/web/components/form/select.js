@@ -22,9 +22,9 @@ import Downshift from 'downshift';
 
 import _ from 'gmp/locale';
 
-import {isDefined, isArray} from 'gmp/utils/identity';
+import { isDefined, isArray } from 'gmp/utils/identity';
 
-import PropTypes, {mayRequire} from 'web/utils/proptypes';
+import PropTypes, { mayRequire } from 'web/utils/proptypes';
 
 import ArrowIcon from 'web/components/icon/arrowicon';
 
@@ -43,7 +43,7 @@ import {
   SelectedValue,
 } from './selectelements';
 
-import {Marker} from './useFormValidation';
+import { Marker } from './useFormValidation';
 
 const SingleSelectedValue = styled(SelectedValue)`
   cursor: default;
@@ -55,34 +55,34 @@ const Div = styled.div`
 
 const SelectValueValidator = (props, prop_name, component_name) => {
   const value = props[prop_name];
-  const {items} = props;
+  const { items } = props;
   const item = find_item(items, value);
 
   if (isArray(items) && isDefined(value) && !isDefined(item)) {
     if (items.length === 0) {
       return new Error(
         'Invalid prop ' +
-          prop_name +
-          ' `' +
-          value +
-          '` for ' +
-          component_name +
-          ' component. items prop is empty.',
-      );
-    }
-    return new Error(
-      'Invalid prop ' +
         prop_name +
         ' `' +
         value +
         '` for ' +
         component_name +
-        ' component. Prop ' +
-        prop_name +
-        ' can not be ' +
-        'found in items `' +
-        items.map(i => i.value) +
-        '`.',
+        ' component. items prop is empty.',
+      );
+    }
+    return new Error(
+      'Invalid prop ' +
+      prop_name +
+      ' `' +
+      value +
+      '` for ' +
+      component_name +
+      ' component. Prop ' +
+      prop_name +
+      ' can not be ' +
+      'found in items `' +
+      items.map(i => i.value) +
+      '`.',
     );
   }
 };
@@ -119,7 +119,7 @@ class Select extends React.Component {
   }
 
   handleChange(value) {
-    const {name, onChange} = this.props;
+    const { name, onChange } = this.props;
 
     if (isDefined(onChange)) {
       onChange(value, name);
@@ -127,20 +127,20 @@ class Select extends React.Component {
   }
 
   handleSearch(event) {
-    const {value} = event.target;
+    const { value } = event.target;
     event.preventDefault(); // prevent handling input by downshift
 
-    this.setState({search: value});
+    this.setState({ search: value });
   }
 
   handleSelect() {
     // reset search term
-    this.setState({search: ''});
+    this.setState({ search: '' });
   }
 
   render() {
-    let {disabled = false} = this.props;
-    const {
+    let { disabled = false } = this.props;
+    let {
       className,
       errorContent,
       hasError = false,
@@ -152,15 +152,13 @@ class Select extends React.Component {
       width = DEFAULT_WIDTH,
       isLoading = false,
     } = this.props;
-
-    const {search} = this.state;
+    const { search } = this.state;
 
     disabled = disabled || !isDefined(items) || items.length === 0 || isLoading;
 
-    const displayedItems = isDefined(items)
+    let displayedItems = isDefined(items)
       ? items.filter(caseInsensitiveFilter(search))
       : [];
-
     return (
       <Downshift
         selectedItem={value}
@@ -204,15 +202,15 @@ class Select extends React.Component {
                     disabled,
                     onClick: isOpen
                       ? event => {
-                          closeMenu();
-                        }
+                        closeMenu();
+                      }
                       : event => {
-                          event.preventDownshiftDefault = true; // don't call default handler from downshift
-                          openMenu(() => {
-                            const {current: input} = this.input;
-                            input !== null && input.focus();
-                          }); // set focus to input field after menu is opened
-                        },
+                        event.preventDownshiftDefault = true; // don't call default handler from downshift
+                        openMenu(() => {
+                          const { current: input } = this.input;
+                          input !== null && input.focus();
+                        }); // set focus to input field after menu is opened
+                      },
                   })}
                   hasError={hasError}
                   isOpen={isOpen}
@@ -253,7 +251,7 @@ class Select extends React.Component {
                     <ItemContainer>
                       {displayedItems.map(
                         (
-                          {label: itemLabel, value: itemValue, key = itemValue},
+                          { label: itemLabel, value: itemValue, key = itemValue },
                           i,
                         ) => (
                           <Item

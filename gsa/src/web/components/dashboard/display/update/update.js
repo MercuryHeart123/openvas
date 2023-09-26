@@ -45,6 +45,7 @@ class StatusDisplay extends React.Component {
             >
                 {({ data }) => (
                     <>
+                        {console.log(data)}
                         <TextDisplay>
                             {data.total == 0 ? "Nothing update today" : data.map((item, index) => {
                                 if (isObject(item)) {

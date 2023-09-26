@@ -18,20 +18,19 @@
 
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
 import logger from 'gmp/log';
 
-import Filter, {RESET_FILTER, RESULTS_FILTER_FILTER} from 'gmp/models/filter';
-import {isActive} from 'gmp/models/task';
+import Filter, { RESET_FILTER, RESULTS_FILTER_FILTER } from 'gmp/models/filter';
+import { isActive } from 'gmp/models/task';
 
-import {first} from 'gmp/utils/array';
-import {isDefined, hasValue} from 'gmp/utils/identity';
+import { first } from 'gmp/utils/array';
+import { isDefined, hasValue } from 'gmp/utils/identity';
 
 import withDownload from 'web/components/form/withDownload';
-
 import Reload, {
   NO_RELOAD,
   USE_DEFAULT_RELOAD_INTERVAL_ACTIVE,
@@ -53,8 +52,8 @@ import {
   selector as reportFormatsSelector,
 } from 'web/store/entities/reportformats';
 
-import {loadReportWithThreshold} from 'web/store/entities/report/actions';
-import {reportSelector} from 'web/store/entities/report/selectors';
+import { loadReportWithThreshold } from 'web/store/entities/report/actions';
+import { reportSelector } from 'web/store/entities/report/selectors';
 
 import {
   loadReportComposerDefaults,
@@ -62,18 +61,18 @@ import {
   saveReportComposerDefaults,
 } from 'web/store/usersettings/actions';
 
-import {loadUserSettingDefaults} from 'web/store/usersettings/defaults/actions';
-import {getUserSettingsDefaults} from 'web/store/usersettings/defaults/selectors';
-import {getUserSettingsDefaultFilter} from 'web/store/usersettings/defaultfilters/selectors';
+import { loadUserSettingDefaults } from 'web/store/usersettings/defaults/actions';
+import { getUserSettingsDefaults } from 'web/store/usersettings/defaults/selectors';
+import { getUserSettingsDefaultFilter } from 'web/store/usersettings/defaultfilters/selectors';
 
 import {
   getReportComposerDefaults,
   getUsername,
 } from 'web/store/usersettings/selectors';
 
-import {create_pem_certificate} from 'web/utils/cert';
+import { create_pem_certificate } from 'web/utils/cert';
 import compose from 'web/utils/compose';
-import {generateFilename} from 'web/utils/render';
+import { generateFilename } from 'web/utils/render';
 import PropTypes from 'web/utils/proptypes';
 import withGmp from 'web/utils/withGmp';
 
@@ -82,7 +81,7 @@ import PageTitle from 'web/components/layout/pagetitle';
 
 import Page from './detailscontent';
 import FilterDialog from './detailsfilterdialog';
-import {pageFilter as setPageFilter} from 'web/store/pages/actions';
+import { pageFilter as setPageFilter } from 'web/store/pages/actions';
 import getPage from 'web/store/pages/selectors';
 
 const log = logger.getLogger('web.pages.report.detailspage');
@@ -98,13 +97,13 @@ export const REPORT_RESET_FILTER = RESET_FILTER.copy()
 const REPORT_FORMATS_FILTER = Filter.fromString('active=1 and trust=1 rows=-1');
 
 const getTarget = (entity = {}) => {
-  const {report = {}} = entity;
-  const {task = {}} = report;
+  const { report = {} } = entity;
+  const { task = {} } = report;
   return task.target;
 };
 
 const getFilter = (entity = {}) => {
-  const {report = {}} = entity;
+  const { report = {} } = entity;
   return report.filter;
 };
 
@@ -193,7 +192,7 @@ class ReportDetails extends React.Component {
     if (isDefined(props.entity)) {
       // update only if a new report is available to avoid having no report
       // when the filter changes
-      const {report = {}} = props.entity;
+      const { report = {} } = props.entity;
       const {
         results = {},
         hosts = {},
@@ -248,7 +247,7 @@ class ReportDetails extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {reportFormats} = this.props;
+    const { reportFormats } = this.props;
     if (
       !isDefined(this.state.reportFormatId) &&
       isDefined(reportFormats) &&
@@ -260,16 +259,16 @@ class ReportDetails extends React.Component {
         // ensure the report format id is only set if we really have one
         // if no report format id is available we would create an infinite
         // render loop here
-        this.setState({reportFormatId});
+        this.setState({ reportFormatId });
       } else {
         // if there is no report format at all, throw a proper error message
         // instead of just showing x is undefined JS stacktrace
         const noReportFormatError = _(
           'The report cannot be displayed because' +
-            ' no Greenbone Vulnerability Manager report format is available.' +
-            ' This could be due to a missing gvmd data feed. Please update' +
-            ' the gvmd data feed, check the "feed import owner" setting, or' +
-            ' contact your system administrator.',
+          ' no Greenbone Vulnerability Manager report format is available.' +
+          ' This could be due to a missing gvmd data feed. Please update' +
+          ' the gvmd data feed, check the "feed import owner" setting, or' +
+          ' contact your system administrator.',
         );
         throw new Error(noReportFormatError);
       }
@@ -284,7 +283,7 @@ class ReportDetails extends React.Component {
     log.debug('Loading report', {
       filter,
     });
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
 
     this.setState({
       isUpdating: !isDefined(reportFilter) || !reportFilter.equals(filter), // show update indicator if filter has changed
@@ -293,10 +292,10 @@ class ReportDetails extends React.Component {
     this.props
       .reload(filter)
       .then(() => {
-        this.setState({isUpdating: false});
+        this.setState({ isUpdating: false });
       })
       .catch(() => {
-        this.setState({isUpdating: false});
+        this.setState({ isUpdating: false });
       });
   }
 
@@ -310,7 +309,7 @@ class ReportDetails extends React.Component {
   }
 
   handleError(error) {
-    const {showError} = this.props;
+    const { showError } = this.props;
     log.error(error);
     showError(error);
   }
@@ -336,15 +335,15 @@ class ReportDetails extends React.Component {
   handleActivateTab(index) {
     this.handleInteraction();
 
-    this.setState({activeTab: index});
+    this.setState({ activeTab: index });
   }
 
   handleAddToAssets() {
-    const {gmp, showSuccessMessage, entity, reportFilter: filter} = this.props;
+    const { gmp, showSuccessMessage, entity, reportFilter: filter } = this.props;
 
     this.handleInteraction();
 
-    gmp.report.addAssets(entity, {filter}).then(() => {
+    gmp.report.addAssets(entity, { filter }).then(() => {
       showSuccessMessage(
         _(
           'Report content added to Assets with QoD>=70% and Overrides enabled.',
@@ -355,11 +354,11 @@ class ReportDetails extends React.Component {
   }
 
   handleRemoveFromAssets() {
-    const {gmp, showSuccessMessage, entity, reportFilter: filter} = this.props;
+    const { gmp, showSuccessMessage, entity, reportFilter: filter } = this.props;
 
     this.handleInteraction();
 
-    gmp.report.removeAssets(entity, {filter}).then(() => {
+    gmp.report.removeAssets(entity, { filter }).then(() => {
       showSuccessMessage(_('Report content removed from Assets.'));
       this.reload();
     }, this.handleError);
@@ -368,13 +367,13 @@ class ReportDetails extends React.Component {
   handleFilterEditClick() {
     this.handleInteraction();
 
-    this.setState({showFilterDialog: true});
+    this.setState({ showFilterDialog: true });
   }
 
   handleFilterDialogClose() {
     this.handleInteraction();
 
-    this.setState({showFilterDialog: false});
+    this.setState({ showFilterDialog: false });
   }
 
   handleOpenDownloadReportDialog() {
@@ -384,7 +383,7 @@ class ReportDetails extends React.Component {
   }
 
   handleCloseDownloadReportDialog() {
-    this.setState({showDownloadReportDialog: false});
+    this.setState({ showDownloadReportDialog: false });
   }
 
   handleReportDownload(state) {
@@ -429,14 +428,53 @@ class ReportDetails extends React.Component {
 
     this.handleInteraction();
 
+    if (reportFormatId == "CPDF") {
+      let options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reportId: entity.id,
+          token: this.props.gmp.settings.djangotoken,
+        }),
+      }
+      return fetch("http://172.31.119.130:8081/api/download", options).then(response => {
+        response.arrayBuffer().then(response => {
+          this.setState({ showDownloadReportDialog: false });
+          // const { data } = response;
+          console.log(response);
+          // const filename = generateFilename({
+          //   creationTime: entity.creationTime,
+          //   extension,
+          //   fileNameFormat: reportExportFileName,
+          //   id: entity.id,
+          //   modificationTime: entity.modificationTime,
+          //   reportFormat: report_format.name,
+          //   resourceName: entity.task.name,
+          //   resourceType: 'report',
+          //   username,
+          // });
+          const url = window.URL.createObjectURL(new Blob([response]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', "eiei" + '.pdf')
+          document.body.appendChild(link)
+          link.click()
+          // onDownload({ filename: 'items.xlsx', response });
+        });
+
+
+      })
+    }
     return gmp.report
       .download(entity, {
         reportFormatId,
         filter: newFilter,
       })
       .then(response => {
-        this.setState({showDownloadReportDialog: false});
-        const {data} = response;
+        this.setState({ showDownloadReportDialog: false });
+        const { data } = response;
         const filename = generateFilename({
           creationTime: entity.creationTime,
           extension,
@@ -449,14 +487,14 @@ class ReportDetails extends React.Component {
           username,
         });
 
-        onDownload({filename, data});
+        onDownload({ filename, data });
       }, this.handleError);
   }
 
   handleTlsCertificateDownload(cert) {
-    const {onDownload} = this.props;
+    const { onDownload } = this.props;
 
-    const {data, serial} = cert;
+    const { data, serial } = cert;
 
     this.handleInteraction();
 
@@ -474,7 +512,7 @@ class ReportDetails extends React.Component {
   }
 
   handleFilterAddLogLevel() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
     let levels = reportFilter.get('levels', '');
 
     this.handleInteraction();
@@ -488,7 +526,7 @@ class ReportDetails extends React.Component {
   }
 
   handleFilterRemoveSeverity() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
 
     this.handleInteraction();
 
@@ -500,7 +538,7 @@ class ReportDetails extends React.Component {
   }
 
   handleFilterDecreaseMinQoD() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
 
     this.handleInteraction();
 
@@ -531,14 +569,14 @@ class ReportDetails extends React.Component {
   }
 
   handleInteraction() {
-    const {onInteraction} = this.props;
+    const { onInteraction } = this.props;
     if (isDefined(onInteraction)) {
       onInteraction();
     }
   }
 
   loadTarget() {
-    const {entity} = this.props;
+    const { entity } = this.props;
     const target = getTarget(entity);
 
     return this.props.loadTarget(target.id);
@@ -593,7 +631,7 @@ class ReportDetails extends React.Component {
           onError={this.handleError}
           onInteraction={onInteraction}
         >
-          {({edit}) => (
+          {({ edit }) => (
             <Page
               activeTab={activeTab}
               applicationsCounts={applicationsCounts}
@@ -740,23 +778,23 @@ const load = ({
   }
 
   updateFilter(filter);
-  return loadReportWithThreshold(reportId, {filter});
+  return loadReportWithThreshold(reportId, { filter });
 };
 
-const ReportDetailsWrapper = ({reportFilter, ...props}) => (
+const ReportDetailsWrapper = ({ reportFilter, ...props }) => (
   <FilterProvider
     fallbackFilter={DEFAULT_FILTER}
     gmpname="result"
     pageName={`report-${props.reportId}`}
   >
-    {({filter}) => (
+    {({ filter }) => (
       <Reload
         name={`report-${props.reportId}`}
-        load={load({...props, defaultFilter: filter})}
-        reload={load({...props, defaultFilter: filter, reportFilter})}
+        load={load({ ...props, defaultFilter: filter })}
+        reload={load({ ...props, defaultFilter: filter, reportFilter })}
         reloadInterval={() => reloadInterval(props.entity)}
       >
-        {({reload}) => (
+        {({ reload }) => (
           <ReportDetails
             {...props}
             defaultFilter={filter}
@@ -778,11 +816,11 @@ ReportDetailsWrapper.propTypes = {
 
 const getReportPageName = id => `report-${id}`;
 
-const mapDispatchToProps = (dispatch, {gmp, match}) => ({
+const mapDispatchToProps = (dispatch, { gmp, match }) => ({
   onInteraction: () => dispatch(renewSessionTimeout(gmp)()),
   loadFilters: () => dispatch(loadFilters(gmp)(RESULTS_FILTER_FILTER)),
   loadSettings: () => dispatch(loadUserSettingDefaults(gmp)()),
-  loadTarget: targetId => gmp.target.get({id: targetId}),
+  loadTarget: targetId => gmp.target.get({ id: targetId }),
   loadReportFormats: () =>
     dispatch(loadReportFormats(gmp)(REPORT_FORMATS_FILTER)),
   loadReportWithThreshold: (id, options) =>
@@ -794,8 +832,8 @@ const mapDispatchToProps = (dispatch, {gmp, match}) => ({
     dispatch(setPageFilter(getReportPageName(match.params.id), f)),
 });
 
-const mapStateToProps = (rootState, {match}) => {
-  const {id} = match.params;
+const mapStateToProps = (rootState, { match }) => {
+  const { id } = match.params;
   const filterSel = filterSelector(rootState);
   const reportSel = reportSelector(rootState);
   const reportFormatsSel = reportFormatsSelector(rootState);

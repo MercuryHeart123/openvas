@@ -22,12 +22,12 @@ import styled from 'styled-components';
 
 import _ from 'gmp/locale';
 
-import {NO_VALUE, YES_VALUE} from 'gmp/parser';
+import { NO_VALUE, YES_VALUE } from 'gmp/parser';
 
-import {selectSaveId} from 'gmp/utils/id';
-import {isString} from 'gmp/utils/identity';
+import { selectSaveId } from 'gmp/utils/id';
+import { isString } from 'gmp/utils/identity';
 import PropTypes from 'web/utils/proptypes';
-import {renderSelectItems} from 'web/utils/render';
+import { renderSelectItems } from 'web/utils/render';
 
 import ComposerContent, {
   COMPOSER_CONTENT_DEFAULTS,
@@ -70,7 +70,7 @@ const DownloadReportDialog = ({
     reportFormatId,
     storeAsDefault,
   };
-
+  console.log('reportFormats', reportFormats);
   return (
     <SaveDialog
       buttonTitle={_('OK')}
@@ -79,7 +79,7 @@ const DownloadReportDialog = ({
       onClose={onClose}
       onSave={onSave}
     >
-      {({values, onValueChange}) => (
+      {({ values, onValueChange }) => (
         <Layout flex="column">
           <ComposerContent
             filterString={filterString}
@@ -92,7 +92,7 @@ const DownloadReportDialog = ({
               <Select
                 name="reportFormatId"
                 value={values.reportFormatId}
-                items={renderSelectItems(reportFormats)}
+                items={[...renderSelectItems(reportFormats), { label: 'Custome Pdf', value: 'CPDF' }]}
                 width="auto"
                 onChange={onValueChange}
               />

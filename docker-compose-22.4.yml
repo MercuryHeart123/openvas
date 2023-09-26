@@ -165,17 +165,19 @@ services:
       #     - ./frontend/:/app
       #     - node_modules_vol:/app/node_modules
 
-      # back-end:
-      #   image: mercuryheart/backend:lastest
-      #   build: ./backend
-      #   restart: on-failure
-      #   ports:
-      #     - 8081:8081
-      #   volumes:
-      #     - gvmd_socket_vol:/run/gvmd
-      #     - ./backend/:/app
-      #   depends_on:
-      #     - gvmd
+  back-end:
+    image: mercuryheart/backend:lastest
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - 8081:8081
+    volumes:
+      - gvmd_socket_vol:/run/gvmd
+      - ./backend/:/app
+    depends_on:
+      - gvmd
 
   ospd:
     image: mercuryheart/ospd-openvas:stable

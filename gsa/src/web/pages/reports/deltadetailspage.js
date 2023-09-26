@@ -18,17 +18,17 @@
 
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
 import logger from 'gmp/log';
 
-import Filter, {RESET_FILTER, RESULTS_FILTER_FILTER} from 'gmp/models/filter';
-import {isActive} from 'gmp/models/task';
+import Filter, { RESET_FILTER, RESULTS_FILTER_FILTER } from 'gmp/models/filter';
+import { isActive } from 'gmp/models/task';
 
-import {first} from 'gmp/utils/array';
-import {isDefined, hasValue} from 'gmp/utils/identity';
+import { first } from 'gmp/utils/array';
+import { isDefined, hasValue } from 'gmp/utils/identity';
 
 import withDownload from 'web/components/form/withDownload';
 
@@ -51,9 +51,9 @@ import {
   selector as reportFormatsSelector,
 } from 'web/store/entities/reportformats';
 
-import {loadDeltaReport} from 'web/store/entities/report/actions';
+import { loadDeltaReport } from 'web/store/entities/report/actions';
 
-import {deltaReportSelector} from 'web/store/entities/report/selectors';
+import { deltaReportSelector } from 'web/store/entities/report/selectors';
 
 import {
   loadReportComposerDefaults,
@@ -61,19 +61,19 @@ import {
   saveReportComposerDefaults,
 } from 'web/store/usersettings/actions';
 
-import {loadUserSettingDefaults} from 'web/store/usersettings/defaults/actions';
-import {getUserSettingsDefaults} from 'web/store/usersettings/defaults/selectors';
-import {loadUserSettingsDefaultFilter} from 'web/store/usersettings/defaultfilters/actions';
-import {getUserSettingsDefaultFilter} from 'web/store/usersettings/defaultfilters/selectors';
+import { loadUserSettingDefaults } from 'web/store/usersettings/defaults/actions';
+import { getUserSettingsDefaults } from 'web/store/usersettings/defaults/selectors';
+import { loadUserSettingsDefaultFilter } from 'web/store/usersettings/defaultfilters/actions';
+import { getUserSettingsDefaultFilter } from 'web/store/usersettings/defaultfilters/selectors';
 
 import {
   getReportComposerDefaults,
   getUsername,
 } from 'web/store/usersettings/selectors';
 
-import {create_pem_certificate} from 'web/utils/cert';
+import { create_pem_certificate } from 'web/utils/cert';
 import compose from 'web/utils/compose';
-import {generateFilename} from 'web/utils/render';
+import { generateFilename } from 'web/utils/render';
 import PropTypes from 'web/utils/proptypes';
 import withGmp from 'web/utils/withGmp';
 
@@ -91,13 +91,13 @@ const DEFAULT_FILTER = Filter.fromString(
 const REPORT_FORMATS_FILTER = Filter.fromString('active=1 and trust=1 rows=-1');
 
 const getTarget = (entity = {}) => {
-  const {report = {}} = entity;
-  const {task = {}} = report;
+  const { report = {} } = entity;
+  const { task = {} } = report;
   return task.target;
 };
 
 const getFilter = (entity = {}) => {
-  const {report = {}} = entity;
+  const { report = {} } = entity;
   return report.filter;
 };
 
@@ -190,7 +190,8 @@ class DeltaReportDetails extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {reportFormats} = this.props;
+    const { reportFormats } = this.props;
+    console.log(reportFormats);
     if (
       !isDefined(this.state.reportFormatId) &&
       isDefined(reportFormats) &&
@@ -202,7 +203,7 @@ class DeltaReportDetails extends React.Component {
         // ensure the report format id is only set if we really have one
         // if no report format id is available we would create an infinite
         // render loop here
-        this.setState({reportFormatId});
+        this.setState({ reportFormatId });
       }
     }
 
@@ -219,13 +220,13 @@ class DeltaReportDetails extends React.Component {
       filter,
     });
 
-    this.setState(({lastFilter}) => ({
+    this.setState(({ lastFilter }) => ({
       isUpdating: isDefined(lastFilter) && !lastFilter.equals(filter), // show update indicator if filter has changed
       lastFilter: filter,
     }));
 
     this.props.reload(filter).then(() => {
-      this.setState({isUpdating: false});
+      this.setState({ isUpdating: false });
     });
   }
 
@@ -239,7 +240,7 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleError(error) {
-    const {showError} = this.props;
+    const { showError } = this.props;
     log.error(error);
     showError(error);
   }
@@ -261,15 +262,15 @@ class DeltaReportDetails extends React.Component {
   handleActivateTab(index) {
     this.handleInteraction();
 
-    this.setState({activeTab: index});
+    this.setState({ activeTab: index });
   }
 
   handleAddToAssets() {
-    const {gmp, showSuccessMessage, entity, reportFilter: filter} = this.props;
+    const { gmp, showSuccessMessage, entity, reportFilter: filter } = this.props;
 
     this.handleInteraction();
 
-    gmp.report.addAssets(entity, {filter}).then(() => {
+    gmp.report.addAssets(entity, { filter }).then(() => {
       showSuccessMessage(
         _(
           'Report content added to Assets with QoD>=70% and Overrides enabled.',
@@ -280,11 +281,11 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleRemoveFromAssets() {
-    const {gmp, showSuccessMessage, entity, reportFilter: filter} = this.props;
+    const { gmp, showSuccessMessage, entity, reportFilter: filter } = this.props;
 
     this.handleInteraction();
 
-    gmp.report.removeAssets(entity, {filter}).then(() => {
+    gmp.report.removeAssets(entity, { filter }).then(() => {
       showSuccessMessage(_('Report content removed from Assets.'));
       this.reload();
     }, this.handleError);
@@ -293,13 +294,13 @@ class DeltaReportDetails extends React.Component {
   handleFilterEditClick() {
     this.handleInteraction();
 
-    this.setState({showFilterDialog: true});
+    this.setState({ showFilterDialog: true });
   }
 
   handleFilterDialogClose() {
     this.handleInteraction();
 
-    this.setState({showFilterDialog: false});
+    this.setState({ showFilterDialog: false });
   }
 
   handleOpenDownloadReportDialog() {
@@ -309,7 +310,7 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleCloseDownloadReportDialog() {
-    this.setState({showDownloadReportDialog: false});
+    this.setState({ showDownloadReportDialog: false });
   }
 
   handleReportDownload(state) {
@@ -362,8 +363,8 @@ class DeltaReportDetails extends React.Component {
         filter: newFilter,
       })
       .then(response => {
-        this.setState({showDownloadReportDialog: false});
-        const {data} = response;
+        this.setState({ showDownloadReportDialog: false });
+        const { data } = response;
         const filename = generateFilename({
           creationTime: entity.creationTime,
           extension,
@@ -376,14 +377,14 @@ class DeltaReportDetails extends React.Component {
           username,
         });
 
-        onDownload({filename, data});
+        onDownload({ filename, data });
       }, this.handleError);
   }
 
   handleTlsCertificateDownload(cert) {
-    const {onDownload} = this.props;
+    const { onDownload } = this.props;
 
-    const {data, serial} = cert;
+    const { data, serial } = cert;
 
     this.handleInteraction();
 
@@ -400,7 +401,7 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleFilterAddLogLevel() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
     let levels = reportFilter.get('levels', '');
 
     this.handleInteraction();
@@ -414,7 +415,7 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleFilterRemoveSeverity() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
 
     this.handleInteraction();
 
@@ -426,7 +427,7 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleFilterDecreaseMinQoD() {
-    const {reportFilter} = this.props;
+    const { reportFilter } = this.props;
 
     this.handleInteraction();
 
@@ -457,14 +458,14 @@ class DeltaReportDetails extends React.Component {
   }
 
   handleInteraction() {
-    const {onInteraction} = this.props;
+    const { onInteraction } = this.props;
     if (isDefined(onInteraction)) {
       onInteraction();
     }
   }
 
   loadTarget() {
-    const {entity} = this.props;
+    const { entity } = this.props;
     const target = getTarget(entity);
 
     return this.props.loadTarget(target.id);
@@ -494,14 +495,14 @@ class DeltaReportDetails extends React.Component {
       storeAsDefault,
     } = this.state;
 
-    const {report} = entity || {};
+    const { report } = entity || {};
     return (
       <React.Fragment>
         <TargetComponent
           onError={this.handleError}
           onInteraction={onInteraction}
         >
-          {({edit}) => (
+          {({ edit }) => (
             <Page
               activeTab={activeTab}
               entity={entity}
@@ -549,7 +550,7 @@ class DeltaReportDetails extends React.Component {
             onFilterCreated={this.handleFilterCreated}
           />
         )}
-        {showDownloadReportDialog && (
+        {/* {showDownloadReportDialog && (
           <DownloadReportDialog
             defaultReportFormatId={reportComposerDefaults.defaultReportFormatId}
             filter={reportFilter}
@@ -560,7 +561,7 @@ class DeltaReportDetails extends React.Component {
             onClose={this.handleCloseDownloadReportDialog}
             onSave={this.handleReportDownload}
           />
-        )}
+        )} */}
       </React.Fragment>
     );
   }
@@ -600,12 +601,12 @@ DeltaReportDetails.propTypes = {
   onInteraction: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch, {gmp}) => {
+const mapDispatchToProps = (dispatch, { gmp }) => {
   return {
     onInteraction: () => dispatch(renewSessionTimeout(gmp)()),
     loadFilters: () => dispatch(loadFilters(gmp)(RESULTS_FILTER_FILTER)),
     loadSettings: () => dispatch(loadUserSettingDefaults(gmp)()),
-    loadTarget: targetId => gmp.target.get({id: targetId}),
+    loadTarget: targetId => gmp.target.get({ id: targetId }),
     loadReportFormats: () =>
       dispatch(loadReportFormats(gmp)(REPORT_FORMATS_FILTER)),
     loadReport: (id, deltaId, filter) =>
@@ -621,8 +622,8 @@ const mapDispatchToProps = (dispatch, {gmp}) => {
   };
 };
 
-const mapStateToProps = (rootState, {match}) => {
-  const {id, deltaid} = match.params;
+const mapStateToProps = (rootState, { match }) => {
+  const { id, deltaid } = match.params;
   const filterSel = filterSelector(rootState);
   const deltaSel = deltaReportSelector(rootState);
   const reportFormatsSel = reportFormatsSelector(rootState);
@@ -691,14 +692,14 @@ const load = ({
   );
 };
 
-const DeltaReportDetailsWrapper = ({defaultFilter, reportFilter, ...props}) => (
+const DeltaReportDetailsWrapper = ({ defaultFilter, reportFilter, ...props }) => (
   <Reload
     name="report"
-    load={load({...props, defaultFilter})}
-    reload={load({...props, defaultFilter, reportFilter})}
+    load={load({ ...props, defaultFilter })}
+    reload={load({ ...props, defaultFilter, reportFilter })}
     reloadInterval={() => reloadInterval(props.entity)}
   >
-    {({reload}) => (
+    {({ reload }) => (
       <DeltaReportDetails
         {...props}
         defaultFilter={defaultFilter}

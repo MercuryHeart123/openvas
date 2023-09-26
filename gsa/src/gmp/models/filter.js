@@ -828,12 +828,12 @@ const getFormatedDate = (daypast = 0) => {
   // Format the date as "dd/mm/yyyy"
   var day = currentDate.getDate();
   var month = currentDate.getMonth() + 1; // Months are zero-based
-  var year = currentDate.getFullYear() + 543;
+  var year = currentDate.getFullYear();
 
-  var formattedDate = day + '-' + month + '-' + year;
+  var formattedDate = year + '-' + month + '-' + day;
   return formattedDate;
 }
-export const UPDATE_TODAY = Filter.fromString(`modified>${getFormatedDate()} and modified<${getFormatedDate(1)}`);
+export const UPDATE_TODAY = Filter.fromString(`modified>${getFormatedDate(-1)} and modified<${getFormatedDate()}`);
 
 export default Filter;
 
