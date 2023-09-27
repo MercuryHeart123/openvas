@@ -7,9 +7,7 @@ import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 import logging
 import random
-from fpdf import FPDF
-import matplotlib.pyplot as plt
-import io
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,52 +67,15 @@ def parseFormdata(raw_form_data):
 
 #     return HttpResponse(result, status=statusCode, content_type='application/xml')
 def dowloadReportController(request):
-     # Create a new workbook and add a worksheet
     decoded_str = request.body.decode()
     data_dict = json.loads(decoded_str)
-    colors = ['#4dab6d',"#f6ee54","#fabd57","#ee4d55"]
-
-    values = [10.0,9.0,7.0,4.0,0.0]
-
-    fig = plt.figure(figsize=(18,18))
-
-    ax = fig.add_subplot(projection="polar");
-
-    ax.bar(x=[ 1.884,0.942,0.314,0  ], width=[1.256,0.942,0.628,0.314], height=0.5, bottom=2,
-        linewidth=8, edgecolor="white",
-        color=colors, align="edge");
-
-    # plt.annotate("High Performing", xy=(0.16,2.1), rotation=-75, color="white", fontweight="bold");
-    # plt.annotate("Sustainable", xy=(0.65,2.08), rotation=-55, color="white", fontweight="bold");
-    # plt.annotate("Maturing", xy=(1.14,2.1), rotation=-32, color="white", fontweight="bold");
-    # plt.annotate("Developing", xy=(1.62,2.2), color="white", fontweight="bold");
-    # plt.annotate("Foundational", xy=(2.08,2.25), rotation=20, color="white", fontweight="bold");
-    # plt.annotate("Volatile", xy=(2.46,2.25), rotation=45, color="white", fontweight="bold");
-    # plt.annotate("Unsustainable", xy=(3.0,2.25), rotation=75, color="white", fontweight="bold");
-
-    for loc, val in zip([0, 0.314, 0.942, 1.884, 3.14], values):
-        plt.annotate(val, xy=(loc, 2.5), ha="right" if val<=0 else "left");
-
-    plt.annotate("10.0", xytext=(0,0), xy=(0.1, 2.35),
-                arrowprops=dict(arrowstyle="wedge, tail_width=0.5", color="black", shrinkA=0),
-                bbox=dict(boxstyle="circle", facecolor="black", linewidth=2.0, ),
-                fontsize=45, color="white", ha="center"
-                );
-
-
-    plt.title("Performance Gauge Chart", loc="center", pad=20, fontsize=35, fontweight="bold");
-    ax.set_axis_off();
-    # obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    pdf = FPDF('p', 'mm', 'A4')
-    pdf.add_page()
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(40, 10, 'Hello World!',ln=1)
-    pdf.image(buf, x = None, y = None, w = 125, h = 125, type = '', link = '')
-    response = HttpResponse(bytes(pdf.output()), content_type='application/pdf')
-    response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
+    try :
+        obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
+        logger.info(obj)
+        response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
+        response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
+    except Exception as e:
+        response = HttpResponse(str(e), status=500)
     # wb = Workbook()
     # ws = wb.active
     
