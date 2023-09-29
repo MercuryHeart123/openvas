@@ -71,7 +71,6 @@ def dowloadReportController(request):
     data_dict = json.loads(decoded_str)
     try :
         obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
-        logger.info(obj)
         response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
         response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
     except Exception as e:
@@ -201,3 +200,25 @@ def loginController(request):
 
     return HttpResponse(result, status=statusCode, content_type='application/xml')
 
+def logoutController(request):
+    decoded_str = request.body.decode()
+    data_dict = json.loads(decoded_str)
+    try:
+        if request.method == 'POST':
+            djangoToken = data_dict.get('djangotoken')
+            if (djangoToken != None):
+                result = views.logout(djangoToken)
+                statusCode = 200
+
+            else:
+                raise BaseException("djangotoken is required")
+
+        else:
+            raise BaseException("Method not allowed")
+    except Exception as e:
+        result = str(e)
+        logger.error(e)
+        
+        statusCode = 500
+        
+    return HttpResponse({"result":result}, status=statusCode, content_type='application/json')

@@ -17,16 +17,16 @@
  */
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
-import {YES_VALUE} from 'gmp/parser';
+import { YES_VALUE } from 'gmp/parser';
 
-import {duration} from 'gmp/models/date';
-import {scannerTypeName} from 'gmp/models/scanner';
+import { duration } from 'gmp/models/date';
+import { scannerTypeName } from 'gmp/models/scanner';
 
 import {
   loadEntity as loadSchedule,
@@ -41,7 +41,7 @@ import {
 import PropTypes from 'web/utils/proptypes';
 import compose from 'web/utils/compose';
 import withGmp from 'web/utils/withGmp';
-import {renderYesNo} from 'web/utils/render';
+import { renderYesNo } from 'web/utils/render';
 
 import DateTime from 'web/components/date/datetime';
 
@@ -71,7 +71,7 @@ export const compareAlerts = (alertA, alertB) => {
 
 class TaskDetails extends React.Component {
   componentDidMount() {
-    const {entity} = this.props;
+    const { entity } = this.props;
 
     if (isDefined(entity.config)) {
       this.props.loadScanConfig(entity.config.id);
@@ -82,7 +82,7 @@ class TaskDetails extends React.Component {
   }
 
   render() {
-    const {links = true, entity, scanConfig, schedule} = this.props;
+    const { links = true, entity, scanConfig, schedule } = this.props;
     const {
       alerts,
       apply_overrides,
@@ -224,7 +224,7 @@ class TaskDetails extends React.Component {
 
               {in_assets === YES_VALUE && (
                 <TableRow>
-                  <TableData>{_('Min QoD')}</TableData>
+                  <TableData>{_('Min QoDs')}</TableData>
                   <TableData>{min_qod + ' %'}</TableData>
                 </TableRow>
               )}
@@ -285,7 +285,7 @@ class TaskDetails extends React.Component {
                   <TableData>{_('Period')}</TableData>
                   <TableData>
                     {schedule_periods > 1
-                      ? _('{{nr}} more times', {nr: schedule_periods})
+                      ? _('{{nr}} more times', { nr: schedule_periods })
                       : _('Once')}
                   </TableData>
                 </TableRow>
@@ -295,10 +295,10 @@ class TaskDetails extends React.Component {
                 <TableData>
                   {auto_delete === 'keep'
                     ? _(
-                        'Automatically delete oldest reports but always keep ' +
-                          'newest {{nr}} reports',
-                        {nr: auto_delete_data},
-                      )
+                      'Automatically delete oldest reports but always keep ' +
+                      'newest {{nr}} reports',
+                      { nr: auto_delete_data },
+                    )
                     : _('Do not automatically delete reports')}
                 </TableData>
               </TableRow>
@@ -320,7 +320,7 @@ TaskDetails.propTypes = {
   schedule: PropTypes.model,
 };
 
-const mapStateToProps = (rootState, {entity = {}}) => {
+const mapStateToProps = (rootState, { entity = {} }) => {
   const scheduleSel = scheduleSelector(rootState);
   const scanConfigSel = scanConfigSelector(rootState);
   return {
@@ -333,7 +333,7 @@ const mapStateToProps = (rootState, {entity = {}}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {gmp}) => ({
+const mapDispatchToProps = (dispatch, { gmp }) => ({
   loadScanConfig: id => dispatch(loadScanConfig(gmp)(id)),
   loadSchedule: id => dispatch(loadSchedule(gmp)(id)),
 });

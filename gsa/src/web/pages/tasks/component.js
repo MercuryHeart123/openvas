@@ -17,23 +17,23 @@
  */
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
-import {ALL_FILTER} from 'gmp/models/filter';
+import { ALL_FILTER } from 'gmp/models/filter';
 
-import {NO_VALUE} from 'gmp/parser';
+import { NO_VALUE } from 'gmp/parser';
 
-import {map} from 'gmp/utils/array';
-import {isDefined} from 'gmp/utils/identity';
-import {selectSaveId, hasId} from 'gmp/utils/id';
+import { map } from 'gmp/utils/array';
+import { isDefined } from 'gmp/utils/identity';
+import { selectSaveId, hasId } from 'gmp/utils/id';
 
 import date from 'gmp/models/date';
 
-import {FULL_AND_FAST_SCAN_CONFIG_ID} from 'gmp/models/scanconfig';
+import { FULL_AND_FAST_SCAN_CONFIG_ID } from 'gmp/models/scanconfig';
 
-import {OPENVAS_DEFAULT_SCANNER_ID} from 'gmp/models/scanner';
+import { OPENVAS_DEFAULT_SCANNER_ID } from 'gmp/models/scanner';
 
 import {
   loadEntities as loadAlerts,
@@ -70,16 +70,16 @@ import {
   selector as targetSelector,
 } from 'web/store/entities/targets';
 
-import {getTimezone} from 'web/store/usersettings/selectors';
+import { getTimezone } from 'web/store/usersettings/selectors';
 
-import {loadUserSettingDefaults} from 'web/store/usersettings/defaults/actions';
-import {getUserSettingsDefaults} from 'web/store/usersettings/defaults/selectors';
+import { loadUserSettingDefaults } from 'web/store/usersettings/defaults/actions';
+import { getUserSettingsDefaults } from 'web/store/usersettings/defaults/selectors';
 
 import compose from 'web/utils/compose';
 import PropTypes from 'web/utils/proptypes';
 import withCapabilities from 'web/utils/withCapabilities';
 import withGmp from 'web/utils/withGmp';
-import {UNSET_VALUE} from 'web/utils/render';
+import { UNSET_VALUE } from 'web/utils/render';
 
 import EntityComponent from 'web/entity/component';
 
@@ -109,7 +109,7 @@ class TaskComponent extends React.Component {
       taskWizardVisible: false,
     };
 
-    const {gmp} = this.props;
+    const { gmp } = this.props;
 
     this.cmd = gmp.task;
 
@@ -163,26 +163,26 @@ class TaskComponent extends React.Component {
   }
 
   handleInteraction() {
-    const {onInteraction} = this.props;
+    const { onInteraction } = this.props;
     if (isDefined(onInteraction)) {
       onInteraction();
     }
   }
 
   handleTargetChange(target_id) {
-    this.setState({target_id});
+    this.setState({ target_id });
   }
 
   handleAlertsChange(alert_ids) {
-    this.setState({alert_ids});
+    this.setState({ alert_ids });
   }
 
   handleScheduleChange(schedule_id) {
-    this.setState({schedule_id});
+    this.setState({ schedule_id });
   }
 
   handleTaskStart(task) {
-    const {onStarted, onStartError} = this.props;
+    const { onStarted, onStartError } = this.props;
 
     this.handleInteraction();
 
@@ -190,7 +190,7 @@ class TaskComponent extends React.Component {
   }
 
   handleTaskStop(task) {
-    const {onStopped, onStopError} = this.props;
+    const { onStopped, onStopError } = this.props;
 
     this.handleInteraction();
 
@@ -198,7 +198,7 @@ class TaskComponent extends React.Component {
   }
 
   handleTaskResume(task) {
-    const {onResumed, onResumeError} = this.props;
+    const { onResumed, onResumeError } = this.props;
 
     this.handleInteraction();
 
@@ -211,27 +211,27 @@ class TaskComponent extends React.Component {
   }
 
   handleAlertCreated(resp) {
-    const {data} = resp;
+    const { data } = resp;
 
     this.props.loadAlerts();
 
-    this.setState(({alert_ids}) => ({alert_ids: [data.id, ...alert_ids]}));
+    this.setState(({ alert_ids }) => ({ alert_ids: [data.id, ...alert_ids] }));
   }
 
   handleScheduleCreated(resp) {
-    const {data} = resp;
+    const { data } = resp;
 
     this.props.loadSchedules();
 
-    this.setState({schedule_id: data.id});
+    this.setState({ schedule_id: data.id });
   }
 
   handleTargetCreated(resp) {
-    const {data} = resp;
+    const { data } = resp;
 
     this.props.loadTargets();
 
-    this.setState({target_id: data.id});
+    this.setState({ target_id: data.id });
   }
 
   openContainerTaskDialog(task) {
@@ -252,7 +252,7 @@ class TaskComponent extends React.Component {
   }
 
   closeContainerTaskDialog() {
-    this.setState({containerTaskDialogVisible: false});
+    this.setState({ containerTaskDialogVisible: false });
   }
 
   handleCloseContainerTaskDialog() {
@@ -264,14 +264,14 @@ class TaskComponent extends React.Component {
     this.handleInteraction();
 
     if (isDefined(data.id)) {
-      const {onContainerSaved, onContainerSaveError} = this.props;
+      const { onContainerSaved, onContainerSaveError } = this.props;
       return this.cmd
         .saveContainer(data)
         .then(onContainerSaved, onContainerSaveError)
         .then(() => this.closeContainerTaskDialog());
     }
 
-    const {onContainerCreated, onContainerCreateError} = this.props;
+    const { onContainerCreated, onContainerCreateError } = this.props;
     return this.cmd
       .createContainer(data)
       .then(onContainerCreated, onContainerCreateError)
@@ -302,10 +302,10 @@ class TaskComponent extends React.Component {
     target_id,
     task,
   }) {
-    const {gmp} = this.props;
+    const { gmp } = this.props;
 
     this.handleInteraction();
-
+    // important
     if (isDefined(id)) {
       // save edit part
       if (isDefined(task) && !task.isChangeable()) {
@@ -314,7 +314,9 @@ class TaskComponent extends React.Component {
         scanner_id = undefined;
         config_id = undefined;
       }
-      const {onSaved, onSaveError} = this.props;
+      const { onSaved, onSaveError } = this.props;
+      console.log('onSaved', onSaved)
+
       return gmp.task
         .save({
           alert_ids,
@@ -337,11 +339,13 @@ class TaskComponent extends React.Component {
           schedule_periods,
           target_id,
         })
-        .then(onSaved, onSaveError)
+        .then(
+          onSaved, onSaveError
+        )
         .then(() => this.closeTaskDialog());
     }
 
-    const {onCreated, onCreateError} = this.props;
+    const { onCreated, onCreateError } = this.props;
     return gmp.task
       .create({
         add_tag,
@@ -378,7 +382,7 @@ class TaskComponent extends React.Component {
   }
 
   closeTaskDialog() {
-    this.setState({taskDialogVisible: false});
+    this.setState({ taskDialogVisible: false });
   }
 
   handleCloseTaskDialog() {
@@ -486,7 +490,7 @@ class TaskComponent extends React.Component {
   }
 
   closeTaskWizard() {
-    this.setState({taskWizardVisible: false});
+    this.setState({ taskWizardVisible: false });
   }
 
   handleCloseTaskWizard() {
@@ -495,7 +499,7 @@ class TaskComponent extends React.Component {
   }
 
   handleSaveTaskWizard(data) {
-    const {onTaskWizardSaved, onTaskWizardError, gmp} = this.props;
+    const { onTaskWizardSaved, onTaskWizardError, gmp } = this.props;
 
     this.handleInteraction();
 
@@ -547,7 +551,7 @@ class TaskComponent extends React.Component {
   }
 
   closeAdvancedTaskWizard() {
-    this.setState({advancedTaskWizardVisible: false});
+    this.setState({ advancedTaskWizardVisible: false });
   }
 
   handleCloseAdvancedTaskWizard() {
@@ -556,7 +560,7 @@ class TaskComponent extends React.Component {
   }
 
   handleSaveAdvancedTaskWizard(data) {
-    const {gmp, onAdvancedTaskWizardSaved, onAdvancedTaskWizardError} =
+    const { gmp, onAdvancedTaskWizardSaved, onAdvancedTaskWizardError } =
       this.props;
 
     this.handleInteraction();
@@ -568,7 +572,7 @@ class TaskComponent extends React.Component {
   }
 
   openModifyTaskWizard() {
-    const {gmp, timezone} = this.props;
+    const { gmp, timezone } = this.props;
 
     gmp.wizard.modifyTask().then(response => {
       const settings = response.data;
@@ -589,7 +593,7 @@ class TaskComponent extends React.Component {
   }
 
   closeModifyTaskWizard() {
-    this.setState({modifyTaskWizardVisible: false});
+    this.setState({ modifyTaskWizardVisible: false });
   }
 
   handleCloseModifyTaskWizard() {
@@ -598,7 +602,7 @@ class TaskComponent extends React.Component {
   }
 
   handleSaveModifyTaskWizard(data) {
-    const {onModifyTaskWizardSaved, onModifyTaskWizardError, gmp} = this.props;
+    const { onModifyTaskWizardSaved, onModifyTaskWizardError, gmp } = this.props;
 
     this.handleInteraction();
 
@@ -618,7 +622,7 @@ class TaskComponent extends React.Component {
   }
 
   closeReportImportDialog() {
-    this.setState({reportImportDialogVisible: false});
+    this.setState({ reportImportDialogVisible: false });
   }
 
   handleCloseReportImportDialog() {
@@ -627,7 +631,7 @@ class TaskComponent extends React.Component {
   }
 
   handleReportImport(data) {
-    const {onReportImported, onReportImportError, gmp} = this.props;
+    const { onReportImported, onReportImportError, gmp } = this.props;
 
     this.handleInteraction();
 
@@ -638,11 +642,11 @@ class TaskComponent extends React.Component {
   }
 
   handleScanConfigChange(config_id) {
-    this.setState({config_id});
+    this.setState({ config_id });
   }
 
   handleScannerChange(scanner_id) {
-    this.setState({scanner_id});
+    this.setState({ scanner_id });
   }
 
   render() {
@@ -751,17 +755,17 @@ class TaskComponent extends React.Component {
                   onCreated={this.handleTargetCreated}
                   onInteraction={onInteraction}
                 >
-                  {({create: createtarget}) => (
+                  {({ create: createtarget }) => (
                     <AlertComponent
                       onCreated={this.handleAlertCreated}
                       onInteraction={onInteraction}
                     >
-                      {({create: createalert}) => (
+                      {({ create: createalert }) => (
                         <ScheduleComponent
                           onCreated={this.handleScheduleCreated}
                           onInteraction={onInteraction}
                         >
-                          {({create: createschedule}) => (
+                          {({ create: createschedule }) => (
                             <TaskDialog
                               alerts={alerts}
                               alert_ids={alert_ids}
@@ -1005,7 +1009,7 @@ const mapStateToProps = rootState => {
   };
 };
 
-const mapDispatchToProp = (dispatch, {gmp}) => ({
+const mapDispatchToProp = (dispatch, { gmp }) => ({
   loadAlerts: () => dispatch(loadAlerts(gmp)(ALL_FILTER)),
   loadCredentials: () => dispatch(loadCredentials(gmp)(ALL_FILTER)),
   loadScanConfigs: () => dispatch(loadScanConfigs(gmp)(ALL_FILTER)),

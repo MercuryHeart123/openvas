@@ -17,10 +17,10 @@
  */
 import React from 'react';
 
-import {Router, Route, Switch} from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 
-import {createBrowserHistory} from 'history';
-import {stringify, parse} from 'qs';
+import { createBrowserHistory } from 'history';
+import { stringify, parse } from 'qs';
 import qhistory from 'qhistory';
 
 import LocationObserver from 'web/components/observer/locationobserver';
@@ -94,8 +94,6 @@ import TargetsPage from './pages/targets/listpage';
 import TargetDetailsPage from './pages/targets/detailspage';
 import TasksPage from './pages/tasks/listpage';
 import TaskDetailsPage from './pages/tasks/detailspage';
-import TicketsPage from './pages/tickets/listpage';
-import TicketDetailsPage from './pages/tickets/detailspage';
 import TlsCertificatesPage from './pages/tlscertificates/listpage';
 import TlsCertificateDetailsPage from './pages/tlscertificates/detailspage';
 import TrashcanPage from './pages/extras/trashcanpage';
@@ -128,7 +126,6 @@ const Routes = () => (
           <Page>
             <Switch>
               <Route exact path="/" component={StartPage} />
-
               <Route path="/about" component={AboutPage} />
               <Route path="/alerts" component={AlertsPage} />
               <Route path="/audits" component={AuditsPage} />
@@ -169,7 +166,6 @@ const Routes = () => (
               <Route path="/tags" component={TagsPage} />
               <Route path="/targets" component={TargetsPage} />
               <Route path="/tasks" component={TasksPage} />
-              <Route path="/tickets" component={TicketsPage} />
               <Route path="/trashcan" component={TrashcanPage} />
               <Route path="/tlscertificates" component={TlsCertificatesPage} />
               <Route path="/users" component={UsersPage} />
@@ -216,7 +212,6 @@ const Routes = () => (
               <Route path="/tag/:id" component={TagDetailsPage} />
               <Route path="/target/:id" component={TargetDetailsPage} />
               <Route path="/task/:id" component={TaskDetailsPage} />
-              <Route path="/ticket/:id" component={TicketDetailsPage} />
               <Route
                 path="/tlscertificate/:id"
                 component={TlsCertificateDetailsPage}

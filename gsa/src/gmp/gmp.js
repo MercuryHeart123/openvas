@@ -137,10 +137,34 @@ class Gmp {
     });
   }
 
+  doDjangoLogout() {
+    if (this.isLoggedIn()) {
+      console.log(this.settings.djangotoken);
+      const promise = fetch("http://172.31.119.130:8081/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          djangotoken: this.settings.djangotoken
+        }),
+      }).then((response) => {
+        console.log(response);
+      }).catch((err) => {
+        log.error('Error on logout', err);
+      });
+
+      return promise;
+    }
+    return Promise.resolve();
+  }
+
   doLogout() { // need to add django section
     if (this.isLoggedIn()) {
       const url = this.buildUrl('logout');
       const args = { token: this.settings.token };
+      console.log(this.settings.djangotoken);
+
 
       const promise = this.http
         .request('get', {
@@ -201,6 +225,7 @@ class Gmp {
 
   clearToken() {
     this.settings.token = undefined;
+    this.settings.djangotoken = undefined;
   }
 
   setLocale(lang) {

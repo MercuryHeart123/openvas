@@ -321,7 +321,6 @@ class TasksCommand extends EntitiesCommand {
               }
             });
             allMap.groups = allMap.groups.concat(groups);
-            console.log(allMap, filter);
 
             resolve(allMap);
           }))

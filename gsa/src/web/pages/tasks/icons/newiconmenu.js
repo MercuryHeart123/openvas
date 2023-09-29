@@ -23,20 +23,22 @@ import NewIcon from 'web/components/icon/newicon';
 
 import IconMenu from 'web/components/menu/iconmenu';
 import MenuEntry from 'web/components/menu/menuentry';
-
+import styled from 'styled-components';
 import PropTypes from 'web/utils/proptypes';
 import withCapabilities from 'web/utils/withCapabilities';
+import withClickHandler from 'web/components/form/withClickHandler';
 
+const Button = withClickHandler()(styled.button`
+  color: red;
+`);
 const NewIconMenu = ({ capabilities, onNewClick, onNewContainerClick }) => {
   if (capabilities.mayCreate('task')) {
     return (
-      <IconMenu icon={<NewIcon />} onClick={onNewClick}>
-        <MenuEntry title={_('New Tasksssssss')} onClick={onNewClick} />
-        <MenuEntry // need to chnage ux/ui
-          title={_('New Container Task')}
-          onClick={onNewContainerClick}
-        />
-      </IconMenu>
+
+      <Button onClick={onNewClick} >
+        TEST
+      </Button>
+
     );
   }
   return null;

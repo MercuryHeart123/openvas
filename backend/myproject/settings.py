@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'fpdf',
     'myapp',
-    "matplotlib"
+    "numpy",
+    "matplotlib",
+    "pytz"
 ]
 
 MIDDLEWARE = [

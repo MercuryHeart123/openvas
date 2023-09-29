@@ -17,12 +17,12 @@
  */
 import React from 'react';
 
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import styled, {keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import _ from 'gmp/locale';
-import {dateTimeWithTimeZone} from 'gmp/locale/date';
+import { dateTimeWithTimeZone } from 'gmp/locale/date';
 
 import LogoutIcon from 'web/components/icon/logouticon';
 import MySettingsIcon from 'web/components/icon/mysettingsicon';
@@ -51,15 +51,15 @@ const Div = styled.div`
     display: block;
   }
   animation: ${keyframes({
-      '0%': {
-        transform: 'scale(0.9)',
-        opacity: 0.2,
-      },
-      '100%': {
-        transform: 'scale(1.0)',
-        opacity: 1,
-      },
-    })}
+  '0%': {
+    transform: 'scale(0.9)',
+    opacity: 0.2,
+  },
+  '100%': {
+    transform: 'scale(1.0)',
+    opacity: 1,
+  },
+})}
     0.1s ease-in;
 `;
 
@@ -137,7 +137,9 @@ const UserMenuContainer = () => {
 
   const handleLogout = event => {
     event.preventDefault();
-
+    gmp.doDjangoLogout().then(() => {
+      console.log('doDjangoLogout');
+    });
     gmp.doLogout().then(() => {
       history.push('/login?type=logout');
     });
@@ -152,7 +154,7 @@ const UserMenuContainer = () => {
       <StyledUserIcon size="medium" />
       <Div>
         <List>
-          <Entry title={_('Logged in as: {{userName}}', {userName})}>
+          <Entry title={_('Logged in as: {{userName}}', { userName })}>
             <Divider>
               <UserIcon />
               <span>{userName}</span>

@@ -19,9 +19,9 @@ import logger from 'gmp/log';
 
 import registerCommand from 'gmp/command';
 
-import {forEach, map} from 'gmp/utils/array';
-import {isArray, isDefined} from 'gmp/utils/identity';
-import {severityValue} from 'gmp/utils/number';
+import { forEach, map } from 'gmp/utils/array';
+import { isArray, isDefined } from 'gmp/utils/identity';
+import { severityValue } from 'gmp/utils/number';
 
 import Capabilities from 'gmp/capabilities/capabilities';
 
@@ -35,7 +35,7 @@ import User, {
 import Setting from 'gmp/models/setting';
 import Settings from 'gmp/models/settings';
 
-import {parseInt} from 'gmp/parser';
+import { parseInt } from 'gmp/parser';
 
 import EntitiesCommand from './entities';
 import EntityCommand from './entity';
@@ -102,7 +102,7 @@ export class UserCommand extends EntityCommand {
 
     return pauth.then(response => {
       const settings = new Settings();
-      const {data} = response;
+      const { data } = response;
 
       if (
         isDefined(data.auth_settings) &&
@@ -136,8 +136,8 @@ export class UserCommand extends EntityCommand {
       cmd: 'get_setting',
       setting_id: id,
     }).then(response => {
-      const {data} = response;
-      const {setting} = data.get_settings.get_settings_response;
+      const { data } = response;
+      const { setting } = data.get_settings.get_settings_response;
       if (!isDefined(setting)) {
         return response.setData(undefined);
       }
@@ -154,7 +154,7 @@ export class UserCommand extends EntityCommand {
       options,
     ).then(response => {
       const settings = {};
-      const {data} = response;
+      const { data } = response;
       forEach(data.get_settings.get_settings_response.setting, setting => {
         // set setting keys to lowercase and remove '-'
         const keyName = transformSettingName(setting.name);
@@ -171,11 +171,16 @@ export class UserCommand extends EntityCommand {
       },
       options,
     ).then(response => {
-      const {data} = response;
-      const {command: commands} = data.get_capabilities.help_response.schema;
+      const { data } = response;
+      const { command: commands } = data.get_capabilities.help_response.schema;
       const caps = map(commands, command => command.name);
       return response.setData(new Capabilities(caps));
-    });
+    }).catch(() => {
+      // if the user does not have the permission to get the capabilities
+      // the server will return a 403
+      return null
+    })
+      ;
   }
 
   create({
@@ -248,7 +253,7 @@ export class UserCommand extends EntityCommand {
     return this.action(data);
   }
 
-  delete({id, inheritorId}) {
+  delete({ id, inheritorId }) {
     const data = {
       cmd: 'delete_user',
       id,
@@ -335,9 +340,9 @@ export class UserCommand extends EntityCommand {
       cmd: 'get_setting',
       setting_id: REPORT_COMPOSER_DEFAULTS_SETTING_ID,
     }).then(response => {
-      const {data} = response;
-      const {setting = {}} = data.get_settings.get_settings_response;
-      const {value} = setting;
+      const { data } = response;
+      const { setting = {} } = data.get_settings.get_settings_response;
+      const { value } = setting;
       let defaults;
 
       try {
@@ -345,7 +350,7 @@ export class UserCommand extends EntityCommand {
       } catch (e) {
         log.warn(
           'Could not parse saved report composer defaults, setting ' +
-            'back to default defaults...',
+          'back to default defaults...',
         );
         defaults = {};
       }
@@ -368,8 +373,8 @@ export class UserCommand extends EntityCommand {
     return this.httpPost({
       cmd: 'renew_session',
     }).then(response => {
-      const {data} = response;
-      const {action_result} = data;
+      const { data } = response;
+      const { action_result } = data;
       const seconds = parseInt(action_result.message);
       return response.setData(moment.unix(seconds));
     });

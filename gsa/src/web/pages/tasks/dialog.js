@@ -20,11 +20,11 @@ import React from 'react';
 
 import _ from 'gmp/locale';
 
-import {first} from 'gmp/utils/array';
-import {isDefined} from 'gmp/utils/identity';
-import {selectSaveId} from 'gmp/utils/id';
+import { first } from 'gmp/utils/array';
+import { isDefined } from 'gmp/utils/identity';
+import { selectSaveId } from 'gmp/utils/id';
 
-import {NO_VALUE, YES_VALUE} from 'gmp/parser';
+import { NO_VALUE, YES_VALUE } from 'gmp/parser';
 
 import {
   AUTO_DELETE_KEEP_DEFAULT_VALUE,
@@ -43,7 +43,7 @@ import {
 
 import PropTypes from 'web/utils/proptypes';
 import withCapabilities from 'web/utils/withCapabilities';
-import {renderSelectItems, UNSET_VALUE} from 'web/utils/render';
+import { renderSelectItems, UNSET_VALUE } from 'web/utils/render';
 
 import SaveDialog from 'web/components/dialog/savedialog';
 
@@ -74,7 +74,7 @@ const get_scanner = (scanners, scanner_id) => {
 };
 
 const ScannerSelect = props => {
-  const {changeTask, isLoading, scannerId, scanners, onChange} = props;
+  const { changeTask, isLoading, scannerId, scanners, onChange } = props;
 
   return (
     <FormGroup title={_('Scanner')}>
@@ -152,7 +152,7 @@ const TaskDialog = ({
   onTargetChange,
   ...data
 }) => {
-  const scanner = get_scanner(scanners, scanner_id);
+  const scanner = get_scanner(scanners, scanner_id); //real
   const scanner_type = isDefined(scanner) ? scanner.scannerType : undefined;
 
   const tag_items = renderSelectItems(tags);
@@ -214,7 +214,7 @@ const TaskDialog = ({
       defaultValues={uncontrolledData}
       values={controlledData}
     >
-      {({values: state, onValueChange}) => {
+      {({ values: state, onValueChange }) => {
         const openvas_config_id = selectSaveId(scan_configs, state.config_id);
 
         const use_openvas_scan_config =
@@ -250,8 +250,8 @@ const TaskDialog = ({
                     change_task
                       ? null
                       : _(
-                          'This setting is not alterable once task has been run at least once.',
-                        )
+                        'This setting is not alterable once task has been run at least once.',
+                      )
                   }
                 >
                   <Select
@@ -374,8 +374,8 @@ const TaskDialog = ({
                 change_task
                   ? null
                   : _(
-                      'This setting is not alterable once task has been run at least once.',
-                    )
+                    'This setting is not alterable once task has been run at least once.',
+                  )
               }
             >
               <ScannerSelect
@@ -394,8 +394,8 @@ const TaskDialog = ({
                       change_task
                         ? null
                         : _(
-                            'This setting is not alterable once task has been run at least once.',
-                          )
+                          'This setting is not alterable once task has been run at least once.',
+                        )
                     }
                   >
                     <Select

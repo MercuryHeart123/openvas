@@ -17,13 +17,13 @@
  */
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import styled from 'styled-components';
 
 import _ from 'gmp/locale';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import Layout from 'web/components/layout/layout';
 
@@ -32,7 +32,7 @@ import MenuEntry from 'web/components/menu/menuentry';
 import MenuHelpEntry from 'web/components/menu/menuhelpentry';
 import MenuSection from 'web/components/menu/menusection';
 
-import {isLoggedIn} from 'web/store/usersettings/selectors';
+import { isLoggedIn } from 'web/store/usersettings/selectors';
 
 import compose from 'web/utils/compose';
 import PropTypes from 'web/utils/proptypes';
@@ -66,7 +66,7 @@ const MenuBarPlaceholder = styled.div`
 `;
 
 // eslint-disable-next-line no-shadow
-const MenuBar = ({isLoggedIn, capabilities}) => {
+const MenuBar = ({ isLoggedIn, capabilities }) => {
   if (!isLoggedIn || !isDefined(capabilities)) {
     return null;
   }
@@ -109,10 +109,6 @@ const MenuBar = ({isLoggedIn, capabilities}) => {
     false,
   );
 
-  const mayOpResilience = ['tickets', 'policies', 'audits'].reduce(
-    (sum, cur) => sum || capabilities.mayAccess(cur),
-    false,
-  );
 
   const mayOpAssets = ['assets', 'tls_certificates'].reduce(
     (sum, cur) => sum || capabilities.mayAccess(cur),
@@ -167,21 +163,7 @@ const MenuBar = ({isLoggedIn, capabilities}) => {
               )}
             </Menu>
           )}
-          {mayOpResilience && (
-            <Menu title={_('Resilience')}>
-              {capabilities.mayAccess('tickets') && (
-                <MenuEntry title={_('Remediation Tickets')} to="tickets" />
-              )}
-              <MenuSection>
-                {capabilities.mayAccess('policies') && (
-                  <MenuEntry title={_('Compliance Policies')} to="policies" />
-                )}
-                {capabilities.mayAccess('audits') && (
-                  <MenuEntry title={_('Compliance Audits')} to="audits" />
-                )}
-              </MenuSection>
-            </Menu>
-          )}
+
           {capabilities.mayAccess('info') && (
             <Menu title={_('SecInfo')}>
               <MenuEntry title={_('NVTs')} to="nvts" />

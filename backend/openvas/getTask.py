@@ -33,6 +33,14 @@ class GvmService:
         else:
             return result
     
+    def logout(self, token):
+        self.logger.info('try to logout with token: ' + token)
+        if self.checkToken(token) == True:
+            self.gmps[token] = None
+            return 'success'
+        else:
+            return 'failed'
+        
     def connect(self, genUid):
         self.logger.info('try to connecting gvmd with genUid: ' + genUid)
         # if self.gmp[genUid] != None and self.gmp[genUid].is_connected() == True:
