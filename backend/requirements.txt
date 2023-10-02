@@ -7,4 +7,3 @@ django-cors-headers
 fpdf2
 matplotlib
 numpy
-pytz

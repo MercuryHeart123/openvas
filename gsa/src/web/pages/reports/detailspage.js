@@ -442,19 +442,7 @@ class ReportDetails extends React.Component {
       return fetch("http://172.31.119.130:8081/api/download", options).then(response => {
         response.arrayBuffer().then(response => {
           this.setState({ showDownloadReportDialog: false });
-          // const { data } = response;
           console.log(response);
-          // const filename = generateFilename({
-          //   creationTime: entity.creationTime,
-          //   extension,
-          //   fileNameFormat: reportExportFileName,
-          //   id: entity.id,
-          //   modificationTime: entity.modificationTime,
-          //   reportFormat: report_format.name,
-          //   resourceName: entity.task.name,
-          //   resourceType: 'report',
-          //   username,
-          // });
           const url = window.URL.createObjectURL(new Blob([response]))
           const link = document.createElement('a')
           link.href = url

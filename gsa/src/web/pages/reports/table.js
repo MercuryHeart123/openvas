@@ -17,14 +17,14 @@
  */
 import React from 'react';
 
-import {_, _l} from 'gmp/locale/lang';
+import { _, _l } from 'gmp/locale/lang';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import PropTypes from '../../utils/proptypes.js';
 
-import {createEntitiesFooter} from '../../entities/footer.js';
-import {createEntitiesTable} from '../../entities/table.js';
+import { createEntitiesFooter } from '../../entities/footer.js';
+import { createEntitiesTable } from '../../entities/table.js';
 
 import SeverityClassLabel from '../../components/label/severityclass.js';
 

@@ -70,9 +70,17 @@ def dowloadReportController(request):
     decoded_str = request.body.decode()
     data_dict = json.loads(decoded_str)
     try :
-        obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
-        response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
-        response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
+        if data_dict.get('deltaReportId') == None : 
+            obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
+            response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
+            response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
+        elif data_dict.get('deltaReportId') != None : 
+            # logger.info(f"{data_dict.get('reportId')} {data_dict.get('deltaReportId')}")
+            # obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
+            
+            obj = views.getData(data_dict.get('reportId'),data_dict.get('token'), data_dict.get('deltaReportId'), )
+            response = HttpResponse(views.getPdf(obj, isDeltaReport=True),status=200, content_type='application/pdf')
+            response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
     except Exception as e:
         response = HttpResponse(str(e), status=500)
     # wb = Workbook()

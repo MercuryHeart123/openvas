@@ -20,9 +20,9 @@ import React from 'react';
 
 import _ from 'gmp/locale';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
-import {TASK_STATUS, isActive} from 'gmp/models/task';
+import { TASK_STATUS, isActive } from 'gmp/models/task';
 
 import SeverityBar from 'web/components/bar/severitybar';
 import StatusBar from 'web/components/bar/statusbar';
@@ -45,8 +45,8 @@ import withEntitiesActions from 'web/entities/withEntitiesActions';
 import PropTypes from 'web/utils/proptypes';
 
 const Actions = withEntitiesActions(
-  ({entity, selectedDeltaReport, onReportDeleteClick, onReportDeltaSelect}) => {
-    const {report} = entity;
+  ({ entity, selectedDeltaReport, onReportDeleteClick, onReportDeltaSelect }) => {
+    const { report } = entity;
     const scanActive = isActive(report.scan_run_status);
 
     const title = scanActive ? _('Scan is active') : _('Delete Report');
@@ -97,8 +97,9 @@ const Row = ({
   links = true,
   ...props
 }) => {
-  const {report} = entity;
-  const {scan_run_status, task} = report;
+  console.log(entity);
+  const { report } = entity;
+  const { scan_run_status, task } = report;
 
   let status = scan_run_status;
   let progress;

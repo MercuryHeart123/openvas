@@ -18,15 +18,15 @@
 
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
-import Filter, {REPORTS_FILTER_FILTER} from 'gmp/models/filter';
+import Filter, { REPORTS_FILTER_FILTER } from 'gmp/models/filter';
 
-import {isActive} from 'gmp/models/task';
+import { isActive } from 'gmp/models/task';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import EntitiesPage from 'web/entities/page';
 import withEntitiesContainer from 'web/entities/withEntitiesContainer';
@@ -65,11 +65,11 @@ import ReportFilterDialog from './filterdialog';
 import ImportReportDialog from './importdialog';
 import ReportsTable from './table';
 
-import ReportsDashboard, {REPORTS_DASHBOARD_ID} from './dashboard';
+import ReportsDashboard, { REPORTS_DASHBOARD_ID } from './dashboard';
 
 const CONTAINER_TASK_FILTER = Filter.fromString('target=""');
 
-const ToolBarIcons = ({onUploadReportClick}) => (
+const ToolBarIcons = ({ onUploadReportClick }) => (
   <IconDivider>
     <ManualIcon
       page="reports"
@@ -106,8 +106,8 @@ class Page extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {filter} = props;
-    const {selectedDeltaReport} = state;
+    const { filter } = props;
+    const { selectedDeltaReport } = state;
 
     if (
       isDefined(selectedDeltaReport) &&
@@ -115,13 +115,13 @@ class Page extends React.Component {
         filter.get('task_id') !== selectedDeltaReport.task.id)
     ) {
       // filter has changed. reset delta report selection
-      return {selectedDeltaReport: undefined};
+      return { selectedDeltaReport: undefined };
     }
     return null;
   }
 
   openCreateTaskDialog() {
-    this.setState({containerTaskDialogVisible: true});
+    this.setState({ containerTaskDialogVisible: true });
   }
 
   openImportDialog(task_id) {
@@ -133,7 +133,7 @@ class Page extends React.Component {
   }
 
   closeImportDialog() {
-    this.setState({importDialogVisible: false});
+    this.setState({ importDialogVisible: false });
   }
 
   handleCloseImportDialog() {
@@ -141,7 +141,7 @@ class Page extends React.Component {
   }
 
   handleImportReport(data) {
-    const {gmp, onChanged, onError} = this.props;
+    const { gmp, onChanged, onError } = this.props;
     return gmp.report
       .import(data)
       .then(onChanged, onError)
@@ -149,15 +149,15 @@ class Page extends React.Component {
   }
 
   closeContainerTaskDialog() {
-    this.setState({containerTaskDialogVisible: false});
+    this.setState({ containerTaskDialogVisible: false });
   }
 
   handleCreateContainerTask(data) {
-    const {gmp} = this.props;
+    const { gmp } = this.props;
     return gmp.task.createContainer(data).then(response => {
-      const {data: task} = response;
+      const { data: task } = response;
       this.props.loadTasks();
-      this.setState({task_id: task.id});
+      this.setState({ task_id: task.id });
       this.closeContainerTaskDialog();
     });
   }
@@ -167,17 +167,17 @@ class Page extends React.Component {
   }
 
   handleReportDeltaSelect(report) {
-    const {onFilterChanged} = this.props;
-    const {selectedDeltaReport, beforeSelectFilter} = this.state;
+    const { onFilterChanged } = this.props;
+    const { selectedDeltaReport, beforeSelectFilter } = this.state;
 
     if (isDefined(selectedDeltaReport)) {
-      const {history} = this.props;
+      const { history } = this.props;
 
       onFilterChanged(beforeSelectFilter);
 
       history.push('/report/delta/' + selectedDeltaReport.id + '/' + report.id);
     } else {
-      const {filter = new Filter()} = this.props;
+      const { filter = new Filter() } = this.props;
 
       onFilterChanged(
         filter
@@ -194,16 +194,16 @@ class Page extends React.Component {
   }
 
   handleReportDeleteClick(report) {
-    const {onDelete} = this.props;
+    const { onDelete } = this.props;
     return onDelete(report);
   }
 
   handleTaskChange(task_id) {
-    this.setState({task_id});
+    this.setState({ task_id });
   }
 
   render() {
-    const {filter, onFilterChanged, onInteraction, tasks} = this.props;
+    const { filter, onFilterChanged, onInteraction, tasks } = this.props;
     const {
       containerTaskDialogVisible,
       importDialogVisible,
@@ -274,7 +274,7 @@ Page.propTypes = {
   onInteraction: PropTypes.func.isRequired,
 };
 
-const reportsReloadInterval = ({entities = []}) =>
+const reportsReloadInterval = ({ entities = [] }) =>
   entities.some(entity => isActive(entity.report.scan_run_status))
     ? USE_DEFAULT_RELOAD_INTERVAL_ACTIVE
     : USE_DEFAULT_RELOAD_INTERVAL;
@@ -286,7 +286,7 @@ const mapStateToProps = rootState => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {gmp}) => ({
+const mapDispatchToProps = (dispatch, { gmp }) => ({
   loadTasks: () => dispatch(loadAllTasks(gmp)(CONTAINER_TASK_FILTER)),
 });
 

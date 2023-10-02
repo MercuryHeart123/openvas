@@ -191,7 +191,6 @@ class DeltaReportDetails extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { reportFormats } = this.props;
-    console.log(reportFormats);
     if (
       !isDefined(this.state.reportFormatId) &&
       isDefined(reportFormats) &&
@@ -356,6 +355,34 @@ class DeltaReportDetails extends React.Component {
 
     this.handleInteraction();
 
+    if (reportFormatId == "CPDF") {
+      let options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reportId: entity.id,
+          deltaReportId: deltaReportId,
+          token: this.props.gmp.settings.djangotoken,
+        }),
+      }
+      return fetch("http://172.31.119.130:8081/api/download", options).then(response => {
+        response.arrayBuffer().then(response => {
+          this.setState({ showDownloadReportDialog: false });
+          console.log(response);
+          const url = window.URL.createObjectURL(new Blob([response]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', "eiei" + '.pdf')
+          document.body.appendChild(link)
+          link.click()
+          // onDownload({ filename: 'items.xlsx', response });
+        });
+
+
+      })
+    }
     return gmp.report
       .download(entity, {
         reportFormatId,
@@ -550,7 +577,7 @@ class DeltaReportDetails extends React.Component {
             onFilterCreated={this.handleFilterCreated}
           />
         )}
-        {/* {showDownloadReportDialog && (
+        {showDownloadReportDialog && (
           <DownloadReportDialog
             defaultReportFormatId={reportComposerDefaults.defaultReportFormatId}
             filter={reportFilter}
@@ -561,7 +588,7 @@ class DeltaReportDetails extends React.Component {
             onClose={this.handleCloseDownloadReportDialog}
             onSave={this.handleReportDownload}
           />
-        )} */}
+        )}
       </React.Fragment>
     );
   }

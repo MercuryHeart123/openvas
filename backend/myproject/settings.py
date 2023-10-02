@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'myapp',
     "numpy",
     "matplotlib",
-    "pytz"
+    
 ]
 
 MIDDLEWARE = [

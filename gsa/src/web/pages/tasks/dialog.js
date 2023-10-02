@@ -275,26 +275,6 @@ const TaskDialog = ({
               </Divider>
             </FormGroup>
 
-            {capabilities.mayOp('get_alerts') && (
-              <FormGroup title={_('Alerts')}>
-                <Divider>
-                  <MultiSelect
-                    name="alert_ids"
-                    items={alert_items}
-                    isLoading={isLoadingAlerts}
-                    value={state.alert_ids}
-                    width="260px"
-                    onChange={onAlertsChange}
-                  />
-                  <Layout>
-                    <NewIcon
-                      title={_('Create a new alert')}
-                      onClick={onNewAlertClick}
-                    />
-                  </Layout>
-                </Divider>
-              </FormGroup>
-            )}
 
             {capabilities.mayOp('get_schedules') && (
               <FormGroup title={_('Schedule')}>
@@ -330,14 +310,6 @@ const TaskDialog = ({
               onChange={onValueChange}
             />
 
-            <FormGroup title={_('Apply Overrides')}>
-              <YesNoRadio
-                name="apply_overrides"
-                disabled={state.in_assets !== YES_VALUE}
-                value={state.apply_overrides}
-                onChange={onValueChange}
-              />
-            </FormGroup>
 
             <FormGroup title={_('Min QoD')}>
               <Spinner
@@ -350,25 +322,9 @@ const TaskDialog = ({
                 value={state.min_qod}
                 onChange={onValueChange}
               />
-              <Layout>%</Layout>
+              <Layout> %</Layout>
             </FormGroup>
 
-            {change_task && (
-              <FormGroup title={_('Alterable Task')}>
-                <YesNoRadio
-                  name="alterable"
-                  disabled={task && !task.isNew()}
-                  value={state.alterable}
-                  onChange={onValueChange}
-                />
-              </FormGroup>
-            )}
-
-            <AutoDeleteReportsGroup
-              autoDelete={state.auto_delete}
-              autoDeleteData={state.auto_delete_data}
-              onChange={onValueChange}
-            />
             <div
               title={
                 change_task
@@ -461,32 +417,6 @@ const TaskDialog = ({
               </Layout>
             )}
 
-            {capabilities.mayAccess('tags') &&
-              capabilities.mayCreate('tag') &&
-              showTagSelection && (
-                <React.Fragment>
-                  <FormGroup title={_('Tag')}>
-                    <Divider>
-                      <Checkbox
-                        title={_('Add:')}
-                        name="add_tag"
-                        checkedValue={YES_VALUE}
-                        unCheckedValue={NO_VALUE}
-                        checked={state.add_tag === YES_VALUE}
-                        onChange={onValueChange}
-                      />
-                      <Select
-                        disabled={state.add_tag !== YES_VALUE}
-                        name="tag_id"
-                        items={tag_items}
-                        isLoading={isLoadingTags}
-                        value={state.tag_id}
-                        onChange={onValueChange}
-                      />
-                    </Divider>
-                  </FormGroup>
-                </React.Fragment>
-              )}
           </Layout>
         );
       }}

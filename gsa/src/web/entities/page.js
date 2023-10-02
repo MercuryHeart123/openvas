@@ -17,12 +17,12 @@
  */
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import _ from 'gmp/locale';
 
-import {isDefined, hasValue} from 'gmp/utils/identity';
-import {excludeObjectProps} from 'gmp/utils/object';
+import { isDefined, hasValue } from 'gmp/utils/identity';
+import { excludeObjectProps } from 'gmp/utils/object';
 
 import compose from 'web/utils/compose';
 import PropTypes from 'web/utils/proptypes';
@@ -40,7 +40,7 @@ import PowerFilter from 'web/components/powerfilter/powerfilter';
 
 import Section from 'web/components/section/section';
 
-import {loadAllEntities, selector} from 'web/store/entities/filters';
+import { loadAllEntities, selector } from 'web/store/entities/filters';
 
 const exclude_props = [
   'children',
@@ -87,23 +87,23 @@ class EntitiesPage extends React.Component {
   }
 
   getSectionTitle() {
-    const {entitiesCounts, title} = this.props;
+    const { entitiesCounts, title } = this.props;
 
     return renderSectionTitle(entitiesCounts, title);
   }
 
   handleFilterEditClick() {
-    this.setState({showFilterDialog: true});
+    this.setState({ showFilterDialog: true });
     this.handleInteraction();
   }
 
   handleFilterDialogCloseClick() {
-    this.setState({showFilterDialog: false});
+    this.setState({ showFilterDialog: false });
     this.handleInteraction();
   }
 
   handleInteraction() {
-    const {onInteraction} = this.props;
+    const { onInteraction } = this.props;
     if (isDefined(onInteraction)) {
       onInteraction();
     }
@@ -118,7 +118,7 @@ class EntitiesPage extends React.Component {
       dashboardControls,
     } = this.props;
 
-    let {section: SectionComponent} = this.props;
+    let { section: SectionComponent } = this.props;
 
     if (SectionComponent === false) {
       return null;
@@ -165,7 +165,6 @@ class EntitiesPage extends React.Component {
     }
 
     const other = excludeObjectProps(props, exclude_props);
-
     return (
       <TableComponent
         {...other}
@@ -218,7 +217,7 @@ class EntitiesPage extends React.Component {
   }
 
   renderToolbarIcons() {
-    let {toolBarIcons, ...other} = this.props;
+    let { toolBarIcons, ...other } = this.props;
 
     if (!isDefined(toolBarIcons)) {
       return null;
@@ -252,7 +251,7 @@ class EntitiesPage extends React.Component {
       filterEditDialog: FilterDialogComponent,
       onFilterChanged,
     } = this.props;
-    const {showFilterDialog} = this.state;
+    const { showFilterDialog } = this.state;
 
     if (!FilterDialogComponent || !showFilterDialog) {
       return null;
@@ -315,7 +314,7 @@ export const createEntitiesPage = (options = {}) => {
   return EntitiesPageWrapper;
 };
 
-const mapStateToProps = (state, {filtersFilter}) => {
+const mapStateToProps = (state, { filtersFilter }) => {
   if (!isDefined(filtersFilter)) {
     return {
       filters: [],
@@ -332,7 +331,7 @@ const mapStateToProps = (state, {filtersFilter}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch, {gmp, filtersFilter}) => ({
+const mapDispatchToProps = (dispatch, { gmp, filtersFilter }) => ({
   loadFilters: () => dispatch(loadAllEntities(gmp)(filtersFilter)),
 });
 

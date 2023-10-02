@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import io
 from datetime import datetime, timedelta
 import numpy as np
-import pytz
+
 
 logger = logging.getLogger(__name__)
 
@@ -44,17 +44,29 @@ def logout(token):
     response = gvm_service.logout(token)
     return response
 
-def getHostResult(report,targetHost):
+def getHostResult(report,targetHost = None):
     all_host_result = {}
     if int(report.find('./report/report/hosts/count').text) == 1:
+        high = report.find('./report/report/result_count/hole/filtered').text
+        medium = report.find('./report/report/result_count/warning/filtered').text
+        low = report.find('./report/report/result_count/info/filtered').text
+        severity = report.find('./report/report/severity/filtered').text
         all_host_result[targetHost] = {
-            'High': report.find('./report/report/result_count/hole/filtered').text,
-            'Medium': report.find('./report/report/result_count/warning/filtered').text,
-            'Low': report.find('./report/report/result_count/info/filtered').text,
-            'severity': report.find('./report/report/severity/filtered').text
+            'High': high,
+            'Medium': medium,
+            'Low': low,
+            'severity': severity
         }
+        all_host_result["summary"] = {
+            'High': high,
+            'Medium': medium,
+            'Low': low,
+            'severity': severity
+        }
+
         return all_host_result
-        
+    
+    all_host_result = {"summary": {"High": 0, "Medium": 0, "Low": 0, "severity": 0}}
     all_host = report.findall('./report/report/host/ip')
     
     for host in all_host:
@@ -69,10 +81,16 @@ def getHostResult(report,targetHost):
     for host_result in host_results:
         host = host_result.find('./host').text
         all_host_result[host][f'{host_result.find("./threat").text}'] += 1
+        all_host_result['summary'][f'{host_result.find("./threat").text}'] += 1
+        # find max severity
+        if float(all_host_result['summary']["severity"]) < float(host_result.find('./severity').text):
+            all_host_result['summary']["severity"] = host_result.find('./severity').text
+        
+        # find max severity of each host
         if float(all_host_result[host]['severity']) < float(host_result.find('./severity').text):
             all_host_result[host]['severity'] = host_result.find('./severity').text
-
     return all_host_result
+
 def getMostVulnerability(report):
     data = report.findall('./report/report/results/result')
     mostScore = data[0]
@@ -112,27 +130,51 @@ def getFamily(report):
         
     return {"familysName":tmp, "count":count, 'color': ['#5A69AF', '#579E65', '#F9C784', '#FC944A', '#F24C00', '#00B825']}
         
-def getData(taskId, token):
-    if(token == None and gvm_service.checkToken(token) == False):
-        return RuntimeError('token is required')
-    
-    report  = getReports(taskId, token)
-    
-    reportXml = ET.fromstring(report)
-    
-    if reportXml.get('status') == '200':
-        name = getTaskName(reportXml)
-        target_Id = getTargetId(reportXml)
-        targetXml = ET.fromstring(getTarget(target_Id, token))
-        targetHost = targetXml.find('./target/hosts').text
-        allHostResult = getHostResult(reportXml,targetHost)
-        mostVul = getMostVulnerability(reportXml)
-        familys = getFamily(reportXml)
-        obj = {'name': name, 'targetHost': targetHost, 'allHostResult': allHostResult, 'mostVul': mostVul, 'familys':familys}
-        return obj
-    return None
+def getData(taskId, token, deltaReportId=None):
+    try :
+        if(token == None and gvm_service.checkToken(token) == False):
+            raise RuntimeError('token is required')
+        report  = getReports(taskId, token)
+        reportXml = ET.fromstring(report)
 
-def getPdf(data):
+        if deltaReportId != None:
+            logger.info(f"deltaReportId : {deltaReportId}")
+            deltaReport = getReports(deltaReportId, token)
+            deltaReportXml = ET.fromstring(deltaReport)
+            if reportXml.get('status') == '200' and deltaReportXml.get('status') == '200':
+                name = getTaskName(reportXml)
+                modficationTime = None
+                format_string = "%Y-%m-%dT%H:%M:%SZ"
+                for report in [reportXml, deltaReportXml]:
+                    if modficationTime == None:
+                        modficationTime = report.find('./report/modification_time').text
+                        mainReport = report
+                        continue
+                    if datetime.strptime(modficationTime, format_string) < datetime.strptime(report.find('./report/modification_time').text, format_string):
+                        modficationTime = report.find('./report/modification_time').text
+                        mainReport = report
+                target_Id = getTargetId(mainReport)
+                targetXml = ET.fromstring(getTarget(target_Id, token))
+                targetHost = targetXml.find('./target/hosts').text
+                allHostResult = getHostResult(mainReport, targetHost)
+                return {"name": name, "modficationTime": modficationTime,'targetHost': targetHost, "allHostResult": allHostResult}
+        
+        
+        if reportXml.get('status') == '200':
+            name = getTaskName(reportXml)
+            target_Id = getTargetId(reportXml)
+            targetXml = ET.fromstring(getTarget(target_Id, token))
+            targetHost = targetXml.find('./target/hosts').text
+            allHostResult = getHostResult(reportXml,targetHost)
+            mostVul = getMostVulnerability(reportXml)
+            familys = getFamily(reportXml)
+            obj = {'name': name, 'targetHost': targetHost, 'allHostResult': allHostResult, 'mostVul': mostVul, 'familys':familys}
+            return obj
+    except Exception as e:
+        logger.error(e)
+        raise RuntimeError(e)
+
+def getPdf(data, isDeltaReport = False):
     class PDF(FPDF, HTMLMixin):
         def header(self):
             
@@ -467,8 +509,10 @@ def getPdf(data):
                 ax.text(*self.bubbles[i, :2], labels[i],
                         horizontalalignment='center', verticalalignment='center')
                 
-    try :
-        colors = ['#4dab6d',"#f6ee54","#fabd57","#ee4d55"]
+    def createGaugeChart(data):
+        # colors = ['#4dab6d',"#f6ee54","#fabd57","#ee4d55"]
+        colors = ['#1B84C6',"#23C6C8","#F8AC58","#ED5465"]
+        
 
         values = [10.0,9.0,7.0,4.0,0.0]
 
@@ -483,7 +527,7 @@ def getPdf(data):
         for loc, val in zip([0, 0.314, 0.942, 1.884, 3.14], values):
             plt.annotate(val, xy=(loc, 1.5), fontsize=30, ha="right" if val<=4.0 else "left");
 
-        score = list(data.get('allHostResult').items())[0][1].get('severity')
+        score = data.get('allHostResult').get("summary").get("severity")
         if float(score) == -99.0:
             score = 0
         plt.annotate( score, xytext=(0,0), xy=(3.14 - (float(score) / 10 * 3.14), 1.35),
@@ -500,13 +544,59 @@ def getPdf(data):
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
+        return buf
+    def getFillColor(severity):
+        fSeverity = float(severity)
+        def hex_to_rgb(hex_code):
+            hex_code = hex_code.lstrip('#')  # Remove the hash symbol if it exists
+            return tuple(int(hex_code[i:i + 2], 16) for i in (0, 2, 4))
+        if fSeverity >= 9.0:
+            return hex_to_rgb('#D83F31')
+        elif fSeverity >= 7.0:
+            return hex_to_rgb('#EE9322')
+        elif fSeverity >= 4.0:
+            return hex_to_rgb('#E9B824')
+        else:
+            return hex_to_rgb('#219C90')
+    # def getTextColor(severity):
+    #     if float(severity) >= 7.0:
+    #         return (255, 255, 255)
+    #     else:
+    #         return (0, 0, 0)
         
-        # genarate pdf
-        
+    try :
         pdf = PDF('p', 'mm', 'A4')
         pdf.add_page()
         pdf.set_font('Arial', '', 12)
         pdf.cell(0, 10, ln=1)
+        
+        if isDeltaReport:
+            severity = data.get("allHostResult").get("summary").get("severity")
+            pdf.set_text_color(255, 255, 255)
+            pdf.set_fill_color(getFillColor(severity))
+            pdf.set_draw_color(getFillColor(severity))
+            pdf.multi_cell(0, 7, f"Scan Summary: {data.get('name')}\n {data.get('modficationTime')}",border=1 ,ln=1,fill=1, align='C')
+            
+            svgCode ="""<svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                width="800px" height="800px" viewBox="0 0 30 30" xml:space="preserve">
+            <g>
+                <path d="M11.001,30l2.707-16.334H5L11.458,0l9.25,0.123L16.667,8H25L11.001,30z"/>
+
+            </g>
+            </svg>
+            """.encode('utf-8')
+            pdf.cell(0, 10, ln=1)
+            pdf.set_x((pdf.w- 15/2) /2)
+            
+            pdf.image(svgCode, x = None, y = None, w = 15, type = '', link = '')
+            
+            pdf.set_text_color(0, 0, 0)
+            pdf.cell(0, 10,"testtttt", ln=1)
+            return bytes(pdf.output())
+        
+        # genarate pdf
+        
+       
         
         
         pdf.set_x(((pdf.w * 0.2) + 170) / 2)
@@ -532,7 +622,7 @@ def getPdf(data):
         pdf.create_table(table_data = result,x_start=x, cell_width='uneven')
         y2 = pdf.get_y()
         pdf.set_xy((pdf.w * 0.2) / 2, abs(y2-y1 + 75/4)/2)
-        pdf.image(buf, x = None, y = None, w = 75, h = 75, type = '', link = '')
+        pdf.image(createGaugeChart(data), x = None, y = None, w = 75, h = 75, type = '', link = '')
         pdf.set_font('Arial', 'B', 10)
         
         pdf.cell(0, 7, "The most vulnerability that need to fix is on host " + data.get("mostVul").get("host"),ln=1)
