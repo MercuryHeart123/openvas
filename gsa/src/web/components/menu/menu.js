@@ -18,9 +18,9 @@
 
 import React from 'react';
 
-import styled, {keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-import {isDefined, hasValue} from 'gmp/utils/identity';
+import { isDefined, hasValue } from 'gmp/utils/identity';
 
 import PropTypes from 'web/utils/proptypes.js';
 import Theme from 'web/utils/theme.js';
@@ -35,7 +35,8 @@ const StyledMenu = styled.li`
   flex-basis: 0;
   margin: 1px;
   height: 35px;
-
+  color: red;
+  border-bottom: ${props => (props.selected == props.title ? `3px solid ${Theme.green}` : `3px solid ${Theme.grey}`)};
   &:hover {
     border-bottom: 3px solid ${Theme.green};
   }
@@ -59,7 +60,6 @@ const DefaultEntry = styled.div`
   display: flex;
   justify-content: center;
   flex-grow: 1;
-
   & a,
   & a:hover,
   & a:focus,
@@ -114,19 +114,19 @@ const MenuList = styled.ul`
     display: block;
   }
   animation: ${keyframes({
-      '0%': {
-        transform: 'scale(0.9)',
-        transformOrigin: 'top',
-        opacity: 0,
-        translateY: '0px',
-      },
-      '100%': {
-        transform: 'scale(1.0)',
-        transformOrigin: 'top',
-        opacity: 1,
-        translate: 0,
-      },
-    })}
+  '0%': {
+    transform: 'scale(0.9)',
+    transformOrigin: 'top',
+    opacity: 0,
+    translateY: '0px',
+  },
+  '100%': {
+    transform: 'scale(1.0)',
+    transformOrigin: 'top',
+    opacity: 1,
+    translate: 0,
+  },
+})}
     0.1s ease-in;
 `;
 
@@ -138,7 +138,12 @@ const getFirstMenuEntry = child => {
   return child;
 };
 
-const Menu = ({children, title, to, ...props}) => {
+const Menu = ({ children, title, to, select, ...props }) => {
+  console.log('select', select);
+  if (!isDefined(select)) {
+    return null
+  }
+  const { selected, setSelect } = select
   let link;
   children = React.Children.toArray(children).filter(hasValue);
 
@@ -147,15 +152,17 @@ const Menu = ({children, title, to, ...props}) => {
   } else if (isDefined(children) && children.length > 0) {
     let [child] = children;
     child = getFirstMenuEntry(child);
-    link = React.cloneElement(child, {title});
+    link = React.cloneElement(child, { title });
   }
 
   const menuentries = children.map(child => (
     <StyledMenuEntry key={child.key}>{child}</StyledMenuEntry>
   ));
   return (
-    <StyledMenu>
-      <DefaultEntry>{link}</DefaultEntry>
+    <StyledMenu selected={selected} title={title}>
+      <DefaultEntry onClick={() => {
+        setSelect(title)
+      }}>{link}</DefaultEntry>
       {isDefined(children) && children.length > 0 && (
         <MenuList>{menuentries}</MenuList>
       )}

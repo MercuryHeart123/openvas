@@ -29,7 +29,7 @@ import { isDefined } from 'gmp/utils/identity';
 import ErrorContainer from 'web/components/error/errorcontainer';
 import useFormValues from 'web/components/form/useFormValues';
 import ProductImage from 'web/components/img/product';
-import GreenboneLoginLogo from 'web/components/img/greenboneloginlogo';
+import TerabyteLoginLogo from 'web/components/img/greenboneloginlogo';
 import Divider from 'web/components/layout/divider';
 import Layout from 'web/components/layout/layout';
 
@@ -91,11 +91,8 @@ const ProductImageContainer = styled(Layout)`
 
 const LoginForm = ({
   error,
-  showGuestLogin = false,
   showLogin = true,
-  showProtocolInsecure = false,
   isIE11 = false,
-  onGuestLoginClick,
   onSubmit,
 }) => {
   const [{ username, password }, handleValueChange] = useFormValues({
@@ -119,28 +116,9 @@ const LoginForm = ({
     <Paper>
       <Divider flex="column" margin="10px" grow="1">
         <Layout align={'center'}>
-          <GreenboneLoginLogo width="300px" />
+          <TerabyteLoginLogo width="300px" />
         </Layout>
 
-        <Layout flex={'column'}>
-          {showProtocolInsecure && (
-            <StyledPanel data-testid="protocol-insecure">
-              <Error>{_('Warning: Connection unencrypted')}</Error>
-              <p>
-                {_(
-                  '123414124 ' +
-                  'anyone listening to the traffic to steal your credentials.',
-                )}
-              </p>
-              <p>
-                {_(
-                  'Please configure a TLS certificate for the HTTPS service ' +
-                  'or ask your administrator to do so as soon as possible.',
-                )}
-              </p>
-            </StyledPanel>
-          )}
-        </Layout>
 
         <Layout>
           {isIE11 && (
@@ -195,20 +173,6 @@ const LoginForm = ({
           )}
         </>
 
-        {showGuestLogin && (
-          <div data-testid="guest-login">
-            <StyledButton
-              data-testid="guest-login-button"
-              onClick={onGuestLoginClick}
-            >
-              {_('Sign In as Guest')}
-            </StyledButton>
-          </div>
-        )}
-
-        <ProductImageContainer align={'center'}>
-          <ProductImage />
-        </ProductImageContainer>
       </Divider>
     </Paper>
   );

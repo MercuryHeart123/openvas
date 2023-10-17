@@ -70,17 +70,16 @@ def dowloadReportController(request):
     decoded_str = request.body.decode()
     data_dict = json.loads(decoded_str)
     try :
-        if data_dict.get('deltaReportId') == None : 
-            obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
-            response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
+        if data_dict.get('reportIdArray') != None : 
+            obj = views.getData(reportIdArray= data_dict.get('reportIdArray'), token= data_dict.get('token'))
+            if len(data_dict.get('reportIdArray')) > 1 :
+                response = HttpResponse(views.getPdf(obj, True),status=200, content_type='application/pdf')
+            else:
+                response = HttpResponse(views.getPdf(obj),status=200, content_type='application/pdf')
             response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
-        elif data_dict.get('deltaReportId') != None : 
-            # logger.info(f"{data_dict.get('reportId')} {data_dict.get('deltaReportId')}")
-            # obj = views.getData(data_dict.get('reportId'), data_dict.get('token'))
-            
-            obj = views.getData(data_dict.get('reportId'),data_dict.get('token'), data_dict.get('deltaReportId'), )
-            response = HttpResponse(views.getPdf(obj, isDeltaReport=True),status=200, content_type='application/pdf')
-            response['Content-Disposition'] = "attachment; filename=myfilename.pdf"
+        else :
+            raise Exception("reportIdArray is required")
+        
     except Exception as e:
         response = HttpResponse(str(e), status=500)
     # wb = Workbook()

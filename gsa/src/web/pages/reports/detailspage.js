@@ -435,7 +435,7 @@ class ReportDetails extends React.Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          reportId: entity.id,
+          reportIdArray: [entity.id],
           token: this.props.gmp.settings.djangotoken,
         }),
       }

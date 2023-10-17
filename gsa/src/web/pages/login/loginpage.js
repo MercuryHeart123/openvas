@@ -178,7 +178,6 @@ class LoginPage extends React.Component {
       isDefined(gmp.settings.guestPassword);
 
     const showLogin = !gmp.settings.disableLoginForm;
-    const showProtocolInsecure = window.location.protocol !== 'https:';
 
     return (
       <StyledLayout>
@@ -188,7 +187,6 @@ class LoginPage extends React.Component {
           error={message}
           showGuestLogin={showGuestLogin}
           showLogin={showLogin}
-          showProtocolInsecure={showProtocolInsecure}
           isIE11={isIE11()}
           onGuestLoginClick={this.handleGuestLogin}
           onSubmit={this.handleSubmit}

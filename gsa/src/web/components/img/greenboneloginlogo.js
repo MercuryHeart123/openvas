@@ -25,13 +25,12 @@ import _ from 'gmp/locale';
 import Img from './img';
 
 const Image = styled(Img)`
-  display: flex;
-  width: 300px;
-`;
+  width: ${props => props.width || "300px"};
+`
 
 const LoginLogo = props => {
   return (
-    <Image alt={_('Greenbone AG')} src={'greenbonehorizontal.png'} />
+    <Image src={'terabytelogo.png'} width={props.width} />
   );
 };
 

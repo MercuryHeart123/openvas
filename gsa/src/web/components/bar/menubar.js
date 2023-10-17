@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 
 import { connect } from 'react-redux';
 
@@ -29,7 +29,6 @@ import Layout from 'web/components/layout/layout';
 
 import Menu from 'web/components/menu/menu';
 import MenuEntry from 'web/components/menu/menuentry';
-import MenuHelpEntry from 'web/components/menu/menuhelpentry';
 import MenuSection from 'web/components/menu/menusection';
 
 import { isLoggedIn } from 'web/store/usersettings/selectors';
@@ -67,6 +66,7 @@ const MenuBarPlaceholder = styled.div`
 
 // eslint-disable-next-line no-shadow
 const MenuBar = ({ isLoggedIn, capabilities }) => {
+  const [selected, setSelect] = useState(false);
   if (!isLoggedIn || !isDefined(capabilities)) {
     return null;
   }
@@ -120,9 +120,9 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
       <MenuBarPlaceholder />
       <Wrapper>
         <Ul>
-          <Menu to="/" title={_('Dashboards')} />
+          <Menu select={{ selected, setSelect }} to="/" title={_('Dashboards')} />
           {may_op_scans && (
-            <Menu title={_('Scans')}>
+            <Menu select={{ selected, setSelect }} title={_('Scans')}>
               {capabilities.mayAccess('tasks') && (
                 <MenuEntry title={_('Tasks')} to="tasks" />
               )}
@@ -148,7 +148,7 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
             </Menu>
           )}
           {mayOpAssets && (
-            <Menu title={_('Assets')}>
+            <Menu select={{ selected, setSelect }} title={_('Assets')}>
               {capabilities.mayAccess('assets') && (
                 <MenuEntry title={_('Hosts')} to="hosts" />
               )}
@@ -165,7 +165,7 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
           )}
 
           {capabilities.mayAccess('info') && (
-            <Menu title={_('SecInfo')}>
+            <Menu select={{ selected, setSelect }} title={_('SecInfo')}>
               <MenuEntry title={_('NVTs')} to="nvts" />
               <MenuEntry title={_('CVEs')} to="cves" />
               <MenuEntry title={_('CPEs')} to="cpes" />
@@ -174,7 +174,7 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
             </Menu>
           )}
           {may_op_configuration && (
-            <Menu title={_('Configuration')}>
+            <Menu select={{ selected, setSelect }} title={_('Configuration')}>
               {capabilities.mayAccess('targets') && (
                 <MenuEntry title={_('Targets')} to="targets" />
               )}
@@ -215,7 +215,7 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
               )}
             </Menu>
           )}
-          <Menu title={_('Administration')}>
+          <Menu select={{ selected, setSelect }} title={_('Administration')}>
             {capabilities.mayAccess('users') && (
               <MenuEntry title={_('Users')} to="users" />
             )}
@@ -260,11 +260,6 @@ const MenuBar = ({ isLoggedIn, capabilities }) => {
                 <MenuEntry title={_('License')} to="license" />
               </MenuSection>
             )}
-          </Menu>
-          <Menu title={_('Help')}>
-            <MenuHelpEntry title={_('User Manual')} />
-            <MenuEntry title={_('CVSS Calculator')} to="cvsscalculator" />
-            <MenuEntry title={_('About')} to="about" />
           </Menu>
         </Ul>
       </Wrapper>

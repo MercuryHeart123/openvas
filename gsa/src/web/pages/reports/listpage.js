@@ -209,7 +209,7 @@ class Page extends React.Component {
       importDialogVisible,
       task_id,
     } = this.state;
-
+    // console.log(this.props);
     return (
       <React.Fragment>
         <PageTitle title={_('Reports')} />
@@ -239,6 +239,7 @@ class Page extends React.Component {
           onUploadReportClick={this.openImportDialog}
           onReportDeltaSelect={this.handleReportDeltaSelect}
           onReportDeleteClick={this.handleReportDeleteClick}
+          downloadDeltaReport={true}
         />
         {importDialogVisible && (
           <ImportReportDialog

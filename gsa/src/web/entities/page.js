@@ -42,6 +42,9 @@ import Section from 'web/components/section/section';
 
 import { loadAllEntities, selector } from 'web/store/entities/filters';
 
+import DownloadButton from 'web/entity/downloadButton';
+
+
 const exclude_props = [
   'children',
   'dashboard',
@@ -73,6 +76,7 @@ class EntitiesPage extends React.Component {
 
     this.state = {
       showFilterDialog: false,
+      isDownload: false
     };
 
     this.handleFilterCreated = this.handleFilterCreated.bind(this);
@@ -216,7 +220,8 @@ class EntitiesPage extends React.Component {
     );
   }
 
-  renderToolbarIcons() {
+
+  renderToolbarIcons() { // click to download report
     let { toolBarIcons, ...other } = this.props;
 
     if (!isDefined(toolBarIcons)) {
@@ -227,7 +232,8 @@ class EntitiesPage extends React.Component {
       return toolBarIcons;
     }
     other = excludeObjectProps(other, exclude_props);
-    return React.createElement(toolBarIcons, other);
+
+    return this.props.downloadDeltaReport ? <DownloadButton {...this.props} /> : React.createElement(toolBarIcons, other);
   }
 
   renderToolbar() {

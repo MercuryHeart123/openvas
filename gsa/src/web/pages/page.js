@@ -18,7 +18,7 @@
 
 import React from 'react';
 
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -26,7 +26,7 @@ import _ from 'gmp/locale';
 
 import logger from 'gmp/log';
 
-import {isDefined} from 'gmp/utils/identity';
+import { isDefined } from 'gmp/utils/identity';
 
 import Capabilities from 'gmp/capabilities/capabilities';
 
@@ -66,19 +66,19 @@ class Page extends React.Component {
   }
 
   componentDidMount() {
-    const {gmp} = this.props;
+    const { gmp } = this.props;
 
     gmp.user
       .currentCapabilities()
       .then(response => {
         const capabilities = response.data;
         log.debug('User capabilities', capabilities);
-        this.setState({capabilities});
+        this.setState({ capabilities });
       })
       .catch(rejection => {
         log.error('An error occurred during fetching capabilities', rejection);
         // use empty capabilities
-        this.setState({capabilities: new Capabilities()});
+        this.setState({ capabilities: new Capabilities() });
       });
 
     this.setState({
@@ -87,12 +87,12 @@ class Page extends React.Component {
   }
 
   handleCloseLicenseNotification() {
-    this.setState({notificationClosed: true});
+    this.setState({ notificationClosed: true });
   }
 
   render() {
-    const {children, location} = this.props;
-    const {capabilities, notificationClosed} = this.state;
+    const { children, location } = this.props;
+    const { capabilities, notificationClosed } = this.state;
     if (!isDefined(capabilities)) {
       // only show content after caps have been loaded
       // this avoids ugly re-rendering of parts of the ui (e.g. the menu)
@@ -105,12 +105,7 @@ class Page extends React.Component {
           <StyledLayout flex="column" align={['start', 'stretch']}>
             <MenuBar />
             <Header />
-            {!notificationClosed && (
-              <LicenseNotification
-                capabilities={capabilities}
-                onCloseClick={this.handleCloseLicenseNotification}
-              />
-            )}
+
             <Main>
               <ErrorBoundary
                 key={location.pathname}

@@ -362,8 +362,7 @@ class DeltaReportDetails extends React.Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          reportId: entity.id,
-          deltaReportId: deltaReportId,
+          reportIdArray: [entity.id, deltaReportId],
           token: this.props.gmp.settings.djangotoken,
         }),
       }

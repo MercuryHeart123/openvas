@@ -18,7 +18,7 @@
 
 import React from 'react';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -31,9 +31,11 @@ import Layout from 'web/components/layout/layout';
 
 import Link from 'web/components/link/link';
 
+import TerabyteLoginLogo from 'web/components/img/greenboneloginlogo';
+
 import UserMenu from 'web/components/menu/usermenu';
 
-import {isLoggedIn} from 'web/store/usersettings/selectors';
+import { isLoggedIn } from 'web/store/usersettings/selectors';
 
 import compose from 'web/utils/compose';
 import PropTypes from 'web/utils/proptypes';
@@ -68,8 +70,8 @@ const TitlebarLayout = styled.div`
   justify-content: space-between;
   align-items: center;
   height: ${TITLE_BAR_HEIGHT};
-  background-color: ${Theme.green};
-  padding: 0px 5px 0px 5px;
+  background-color: ${Theme.lightGreen};
+  padding: 20px;
   position: fixed;
   top: 0;
   left: 0;
@@ -81,14 +83,14 @@ const TitlebarPlaceholder = styled.div`
   height: ${TITLE_BAR_HEIGHT};
 `;
 
-const Titlebar = ({gmp, loggedIn}) => (
+const Titlebar = ({ gmp, loggedIn }) => (
   <React.Fragment>
     <TitlebarPlaceholder />
     <TitlebarLayout>
       {loggedIn ? (
         <React.Fragment>
           <Link to="/" title={_('Dashboard')}>
-            <Greenbone />
+            <TerabyteLoginLogo width="150px" />
           </Link>
           <UserMenu />
         </React.Fragment>

@@ -97,7 +97,6 @@ const Row = ({
   links = true,
   ...props
 }) => {
-  console.log(entity);
   const { report } = entity;
   const { scan_run_status, task } = report;
 

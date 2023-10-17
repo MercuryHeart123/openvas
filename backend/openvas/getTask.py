@@ -48,6 +48,7 @@ class GvmService:
         try:
             with Gmp(connection=self.connection) as gmp:
                 self.gmps[genUid] = gmp
+                
 
         except Exception as e:
             self.logger.error('connect to gvmd failed')
@@ -86,6 +87,17 @@ class GvmService:
                 report_id=reportId, report_format_id=report_format, filter_string=filter)
             return report
 
+    
+    def get_delta(self, reportId=None, delta_report_id=None, token=None, filter="apply_overrides=0 levels=hml rows=100 min_qod=70 first=1 sort-reverse=severity"):
+        if reportId is None:
+            reports = self.gmps[token].get_reports()
+            return reports
+        else:
+            report_format = self.get_report_formats(token)
+            report = self.gmps[token].get_report(
+                report_id=reportId, report_format_id=report_format, filter_string=filter, delta_report_id=delta_report_id)
+            return report
+        
     def get_report_formats(self, token):
         report_formats = self.gmps[token].get_report_formats()
         rootxml = ET.fromstring(report_formats)
