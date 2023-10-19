@@ -194,11 +194,15 @@ def getDeltaResult(report,token):
     firstReport = report[0]
     secondReport = report[1]
     deltaReport = getDeltaReport(secondReport, firstReport,token)
+    logger.info(deltaReport)
     deltaReportXml = ET.fromstring(deltaReport)
     allResult = deltaReportXml.findall('./report/report/results/result')
+    deltaResult = {}
     for result in allResult:
-        host = result.find('./host').text
         delta = result.find('./delta').text
+        if deltaResult.get(delta) == None:
+            deltaResult[delta] = []
+        host = result.find('./host').text
         severity = result.find('./severity').text
         name = result.find('./name').text
         solution = result.find('./nvt/solution').text
@@ -208,7 +212,28 @@ def getDeltaResult(report,token):
             if part.startswith("summary="):
                 summaryText = part[len("summary="):]
                 break
-    pass
+            
+        dictResult = {
+            "host" : host,
+            "severity" : severity,
+            "name" : name,
+            "solution" : solution,
+            "summary" : summaryText
+        }
+        if delta == "new" and deltaResult.get("gone") != None:
+            if dictResult in deltaResult["gone"]:
+                deltaResult["gone"].remove(dictResult)
+                deltaResult["same"].append(dictResult)
+                continue
+        
+        deltaResult[delta].append(dictResult)
+        
+    # remove empty key in deltaResult
+    keys_to_delete = [key for key, value in deltaResult.items() if isinstance(value, list) and not value]
+    for key in keys_to_delete:
+        del deltaResult[key]
+        
+    return deltaResult
     
 def getData(token = None, reportIdArray = None):
     try :
@@ -254,8 +279,9 @@ def getData(token = None, reportIdArray = None):
                 keys[0],
                 keys[1]
             ]
-            deltaResult = getDeltaResult(deltaReport,token)  
-            return {"name": name, "severityPerReport": severityPerReport, 'targetHost': targetHost}
+            deltaResult = getDeltaResult(deltaReport,token)
+            
+            return {"name": name, "severityPerReport": severityPerReport, "deltaResult": deltaResult,'targetHost': targetHost}
         
         else:
             report  = getReports(reportIdArray[0], token)
@@ -764,11 +790,6 @@ def getPdf(data, isDeltaReport = False):
         plt.savefig(buf, format='png')
         buf.seek(0)
         return buf
-    
-    def getDeltaComapare(data):
-        allKey = list(data.keys())
-        lastestReport = data[allKey[-1]]
-        pass
         
     
     def getSeverityInfo(severity):
@@ -790,6 +811,7 @@ def getPdf(data, isDeltaReport = False):
         
         if isDeltaReport:
             allReports = data.get("severityPerReport")
+            deltaResult = data.get("deltaResult")
             def get_modification_time(report_id):
                 return allReports[report_id]['modification_time']
             lastest_report_id = max(allReports, key=get_modification_time)
@@ -843,7 +865,59 @@ def getPdf(data, isDeltaReport = False):
             pdf.image(createHistoryLineChart(allReports), x = None, y = None, w=100, type = '', link = '')
             pdf.set_xy(115, outBox + 25)
             pdf.createCompareReport(allReports)
-            getDeltaComapare(allReports)
+            pdf.set_text_color(0,0,0)
+            pdf.add_page()
+            
+            for page, delta in enumerate(list(deltaResult.keys())[::-1]):
+                pdf.set_font('Arial', 'B', 16)
+                pdf.ln(7)
+                pdf.cell(0, 7, f'Vuulnerability Delta Report ({delta})', ln=1)
+                if delta == "new":
+                    severity = 10
+                elif delta == "gone":
+                    severity = 0
+                else:
+                    severity = 5
+                
+                for result in deltaResult.get(delta)[::-1]:
+                    
+                    with pdf.unbreakable() as doc:
+                        doc.set_fill_color(getFillColor(severity=severity))
+                        doc.set_draw_color(getFillColor(severity=severity))
+                        doc.ln(7)
+                        doc.set_font('Arial', 'B', 12)
+                        doc.multi_cell(0, 7, f'{result.get("name")}',ln=1, fill=1, border="L,R,T")
+                        doc.set_font('Arial', '', 12)
+                        doc.cell(0,3, ln=1,border="L,R")
+                        
+                        doc.set_font('Arial', 'B', 12)
+                        doc.multi_cell(0, 7, f'CVSS score : {result.get("severity")}',ln=1, border="L,R")
+                        doc.cell(0,3, ln=1,border="L,R")
+                        
+                        doc.cell(0,3, ln=1,border="L,T,R")
+                        doc.set_font('Arial', 'B', 12)
+                        doc.cell(0, 7, "Host",ln=1, border="L,R")
+                        doc.set_font('Arial', '', 12)
+                        doc.multi_cell(0, 7, result.get("host"),ln=1, border="L,R")
+                        doc.cell(0,3, ln=1,border="L,B,R")
+                        
+                        doc.cell(0,3, ln=1,border="L,T,R")
+                        doc.set_font('Arial', 'B', 12)
+                        doc.cell(0, 7, "Summary",ln=1, border="L,R")
+                        doc.set_font('Arial', '', 12)
+                        doc.multi_cell(0, 7, result.get("summary"),ln=1, border="L,R")
+                        doc.cell(0,3, ln=1,border="L,B,R")
+                        
+                        doc.cell(0,3, ln=1,border="L,T,R")
+                        doc.set_font('Arial', 'B', 12)
+                        doc.cell(0, 7, "Solution",ln=1, border="L,R")
+                        doc.set_font('Arial', '', 12)
+                        doc.multi_cell(0, 7, result.get("solution"),ln=1, border="L,R")
+                        doc.cell(0,3, ln=1,border="L,R,B")
+                    
+                if page != len(list(deltaResult.keys())) - 1:
+                    pdf.add_page()
+                
             return bytes(pdf.output())
         
         # genarate pdf
