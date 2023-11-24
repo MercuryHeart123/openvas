@@ -67,23 +67,6 @@ def getHostResult(report, targetHost= None):
                     all_host_result['summary']["severity"] = severity.text
             if float(all_host_result[targetHost]['severity']) < float(severity.text):
                     all_host_result[targetHost]['severity'] = severity.text
-        # high = report.find('./report/report/result_count/hole/filtered').text
-        # medium = report.find('./report/report/result_count/warning/filtered').text
-        # low = report.find('./report/report/result_count/info/filtered').text
-        # severity = report.find('./report/report/severity/filtered').text
-        # all_host_result[targetHost] = {
-        #     'High': high,
-        #     'Medium': medium,
-        #     'Low': low,
-        #     'severity': severity
-        # }
-        # all_host_result["summary"] = {
-        #     'High': high,
-        #     'Medium': medium,
-        #     'Low': low,
-        #     'severity': severity
-        # }
-
         return all_host_result
     
     all_host = report.findall('./report/report/host/ip')
@@ -113,10 +96,8 @@ def getHostResult(report, targetHost= None):
     return all_host_result
 
 def getAllResult(report, allHostResult, targetHost=None):
+    
     results = report.findall('./report/report/results/result')
-    
-    
-    
     for result in results:
         host = None
         if len(results) == 1:
@@ -125,8 +106,6 @@ def getAllResult(report, allHostResult, targetHost=None):
             host = result.find('./host').text
         if allHostResult[host].get("results") == None:
             allHostResult[host]["results"] = []
-
-        
         tags = result.find('./nvt/tags').text
         parts = tags.split("|")
         for part in parts:
@@ -140,22 +119,6 @@ def getAllResult(report, allHostResult, targetHost=None):
             "solution" : result.find('./nvt/solution').text,
             "created" : result.find('./creation_time').text,
         })
-        
-    # mostScore = data[0]
-    # tags = mostScore.find('./nvt/tags').text
-    # parts = tags.split("|")
-    # for part in parts:
-    #     if part.startswith("summary="):
-    #         desired_text = part[len("summary="):]
-    #         break
-    # data_dict = {
-    #     "name" : mostScore.find('./name').text,
-    #     "host" : mostScore.find('./host').text,
-    #     "severity" : mostScore.find('./severity').text,
-    #     "summary" : desired_text,
-    #     "solution" : mostScore.find('./nvt/solution').text,
-    #     "created" : mostScore.find('./creation_time').text,
-    # }
     return allHostResult
 
 def getFamily(report):
@@ -180,13 +143,7 @@ def getFamily(report):
     for result in allResult:
         severity = result.find('./severity').text
         count[getSeverityThreshold(severity)][familysName.index(result.find('./nvt/family').text)] += 1
-            # count[getSeverityThreshold(severity)] = [0 for _ in range(5)]
-    # index = 0
-    # tmp = []
-    # for family in familysName:
-    #     tmp.append(family + " (" + str(count[index]) + ")")
-    #     index += 1
-        
+
         
     return {"familysName":familysName, "count":count}
 
@@ -256,8 +213,6 @@ def getData(token = None, reportIdArray = None):
             
             name = getTaskName(allDataReport[reportIdArray[0]])
             
-            # format_string = "%Y-%m-%dT%H:%M:%SZ"
-            
             severityPerReport = {}
             for report in allDataReport.keys():
                 modficationTime = allDataReport[report].find('./report/modification_time').text
@@ -266,14 +221,6 @@ def getData(token = None, reportIdArray = None):
                     "result" : getHostResult(allDataReport[report], targetHost)["summary"],
                     "modification_time" : modficationTime
                 }
-                # if datetime.strptime(modficationTime, format_string) < datetime.strptime(allDataReport[report].find('./report/modification_time').text, format_string):
-                #     modficationTime = allDataReport[report].find('./report/modification_time').text
-                #     severityPerReport[report] = {
-                #         "result" : getHostResult(allDataReport[report])["summary"],
-                #         "modifcationTime" : modficationTime
-                #     }
-                #     mainReport = allDataReport[report]
-            
             keys = list(allDataReport.keys())
             deltaReport = [
                 keys[0],
@@ -292,7 +239,6 @@ def getData(token = None, reportIdArray = None):
             targetXml = ET.fromstring(getTarget(target_Id, token))
             targetHost = targetXml.find('./target/hosts').text
             allHostResult = getHostResult(reportXml, targetHost=targetHost)
-            
             allResult = getAllResult(reportXml, allHostResult, targetHost=targetHost)
             familys = getFamily(reportXml)
             
@@ -301,6 +247,7 @@ def getData(token = None, reportIdArray = None):
     except Exception as e:
         logger.error(e)
         raise RuntimeError(e)
+
 def getSeverityThreshold(severity):
         fSeverity = float(severity)
         if fSeverity >= 9.0:
@@ -359,10 +306,6 @@ def getPdf(data, isDeltaReport = False):
                     self.set_xy(totalPad - ((strLength - maxBoxLength) / 2), strLevel)
                     self.set_text_color(119,121,123)
                     self.cell(strLength, 7, key, ln=1, align="C")
-            # pdf.cell(pdf.get_string_width("Medium"), 7, "Medium", ln=1)
-            # pdf.set_font('Arial', '', 12)
-            
-            # pdf.cell(pdf.get_string_width("Issues"), 7, "Issues", ln=1)
                 else:
                     self.set_xy(totalPad + ((maxBoxLength - strLength) / 2), strLevel)
                     self.set_text_color(119,121,123)
@@ -638,17 +581,12 @@ def getPdf(data, isDeltaReport = False):
                 if index == len(y):
                     continue
                 y[index].append(element)
-        # y = np.row_stack((fnx(), fnx(), fnx()))   
-        # this call to 'cumsum' (cumulative sum), passing in your y data, 
-        # is necessary to avoid having to manually order the datasets
         y = np.flip(np.flip(y, axis=1), axis=0)
         
         x = np.arange(len(list(allReports.values())))
         y_stack = y   # a 3x10 array
 
         fig = plt.figure()
-        # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%dT%H:%M:%S'))
-        # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
         ax1 = fig.add_subplot(111)
         ax1.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax1.fill_between(x, 0, y_stack[0,:], facecolor="#219C90", alpha=0.75)
@@ -660,15 +598,12 @@ def getPdf(data, isDeltaReport = False):
         plt.plot(x, y_stack[2,:], color="#EE9322", marker='o')
         plt.plot(x, y_stack[3,:], color="#D83F31", marker='o')
         ax1.set_xlim(0)
-        # ax1.set_xlim(min(modification_times))
         ax1.set_ylim(0)
         plt.ylabel('Number of vulnerabilities')
         plt.xticks(x, modification_times[::-1], rotation=-30)
         ax1.grid(True)
 
         plt.tight_layout()
-        # Format x-axis labels as dates
-        
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
@@ -840,17 +775,6 @@ def getPdf(data, isDeltaReport = False):
             pdf.createBox(allHostSummary)
             outBox = pdf.get_y()
             
-            # pdf.set_fill_color(getFillColor(4))
-            
-            # pdf.set_text_color(255, 255, 255)
-            # pdf.set_font('Arial', 'B', 13)
-            # pdf.multi_cell(pdf.get_string_width(allHostSummary.get('Medium')) + 10, pdf.get_string_width(allHostSummary.get('Medium')) + 10, f"{allHostSummary.get('Medium')}", align="C",fill=1 , ln=1)
-            
-            # pdf.set_text_color(119,121,123)
-            # pdf.cell(pdf.get_string_width("Medium"), 7, "Medium", ln=1)
-            # pdf.set_font('Arial', '', 12)
-            
-            # pdf.cell(pdf.get_string_width("Issues"), 7, "Issues", ln=1)
             pdf.set_xy((pdf.w- 15) /2, y + 5)
             pdf.set_fill_color(getFillColor(severity=severity))
             svgCode ="""<svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -923,22 +847,14 @@ def getPdf(data, isDeltaReport = False):
         # genarate pdf
         
        
-        
-        logger.info(data)
         pdf.set_x((pdf.w - 75) / 2)
         pdf.image(createGaugeChart(data), x = None, y = None, w = 75, type = '', link = '')
-        
-        # pdf.set_x(((pdf.w * 0.2) + 170) / 2)
-        # x = pdf.get_x()
         pdf.set_x(pdf.l_margin)
         pdf.cell(0, 7, "Report name : " + data.get('name'), ln=1, align="C")
-        # y1 = pdf.get_y()
         
         pdf.set_font('Arial', '', 10)
-        # pdf.set_x(x)
 
         pdf.cell(40, 7, "Created on : "+ datetime.today().date().strftime('%d/%m/%Y') ,ln=1)
-        # pdf.set_x(x)
         
         pdf.cell(40, 7, "Target Host Information: " + data.get('targetHost'),ln=1)
         pdf.ln(10)
@@ -965,8 +881,6 @@ def getPdf(data, isDeltaReport = False):
         pdf.ln(5)
         pdf.cell(0, 7, "Vulnerability by family", ln=1, align="C")
         pdf.image(createStackedBarChart(data.get("familys")), x = (pdf.w - 90) /2, y = None, w = 90, type = '', link = '')
-        # y2 = pdf.get_y()
-        # pdf.set_xy((pdf.w * 0.2) / 2, abs(y2-y1 + 75/4)/2)
         pdf.add_page()
         pdf.set_font('Arial', 'B', 22)
         pdf.ln(10)
@@ -1010,31 +924,7 @@ def getPdf(data, isDeltaReport = False):
                 
             if page != len(list(data.get("allHostResult").keys())) - 1:
                 pdf.add_page()
-            
-        # utc_time_str = data.get("mostVul").get("created")
-        # utc_time = datetime.strptime(utc_time_str, "%Y-%m-%dT%H:%M:%SZ")
-        # utc_offset = timedelta(hours=7)
-        # local_time = utc_time + utc_offset
-        # pdf.cell(0, 7, "Scanned on : " + str(local_time) ,ln=1)
 
-        # bubble_chart = BubbleChart(area=data.get("familys").get("count"),
-        #                    bubble_spacing=0.1)
-
-        # bubble_chart.collapse()
-
-        # fig, ax = plt.subplots(subplot_kw=dict(aspect="equal"))
-        # bubble_chart.plot(
-        #     ax, data.get("familys").get("familysName"), data.get("familys").get("color"))
-        # ax.axis("off")
-        # ax.relim()
-        # ax.autoscale_view()
-        # ax.set_title('Vulnerability by family', fontsize=20, fontweight="bold")
-        # buf = io.BytesIO()
-        # plt.savefig(buf, format='png')
-        # buf.seek(0)
-        # pdf.set_x((pdf.w-125)/2)
-        # pdf.image(buf, x = None, y = None, w=125, type = '', link = '')
-        
         return bytes(pdf.output())
     except Exception as e:
         logger.error(e)

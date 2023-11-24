@@ -33,30 +33,22 @@ const DownloadButton = (props) => {
             }),
         }
         setIsDownload(true)
-        return fetch("http://172.31.119.130:8081/api/download", options).then(response => {
-            response.arrayBuffer().then(response => {
-
-                console.log(response);
-                const url = window.URL.createObjectURL(new Blob([response]))
-                const link = document.createElement('a')
-                link.href = url
-                link.setAttribute('download', "eiei" + '.pdf')
-                document.body.appendChild(link)
-                link.click()
-                setIsDownload(false)
-
-
-                // onDownload({ filename: 'items.xlsx', response });
-            })
-                .catch(error => {
-                    console.log(error);
+        return fetch("http://172.31.119.130:8081/api/download", options)
+            .then(response => {
+                response.arrayBuffer().then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response]))
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.setAttribute('download', "summary" + '.pdf')
+                    document.body.appendChild(link)
+                    link.click()
                     setIsDownload(false)
-
-
                 })
-
-
-        })
+                    .catch(error => {
+                        console.log(error);
+                        setIsDownload(false)
+                    })
+            })
     }
     return (
         <ClickableButton onClick={() => downloadReport()}>

@@ -29,14 +29,14 @@ import withCapabilities from 'web/utils/withCapabilities';
 import withClickHandler from 'web/components/form/withClickHandler';
 
 const Button = withClickHandler()(styled.button`
-  color: red;
+  color: black;
 `);
 const NewIconMenu = ({ capabilities, onNewClick, onNewContainerClick }) => {
   if (capabilities.mayCreate('task')) {
     return (
 
       <Button onClick={onNewClick} >
-        TEST
+        New Task
       </Button>
 
     );

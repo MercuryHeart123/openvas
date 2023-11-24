@@ -373,7 +373,7 @@ class DeltaReportDetails extends React.Component {
           const url = window.URL.createObjectURL(new Blob([response]))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', "eiei" + '.pdf')
+          link.setAttribute('download', "compare" + '.pdf')
           document.body.appendChild(link)
           link.click()
           // onDownload({ filename: 'items.xlsx', response });

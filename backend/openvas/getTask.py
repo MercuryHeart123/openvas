@@ -43,13 +43,10 @@ class GvmService:
         
     def connect(self, genUid):
         self.logger.info('try to connecting gvmd with genUid: ' + genUid)
-        # if self.gmp[genUid] != None and self.gmp[genUid].is_connected() == True:
-        #     self.connection.disconnect()
         try:
             with Gmp(connection=self.connection) as gmp:
                 self.gmps[genUid] = gmp
                 
-
         except Exception as e:
             self.logger.error('connect to gvmd failed')
             self.logger.error(e)

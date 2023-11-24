@@ -61,7 +61,6 @@ import 'gmp/commands/trashcan';
 import 'gmp/commands/users';
 import 'gmp/commands/vulns';
 import 'gmp/commands/wizard';
-import 'gmp/commands/djangocommand'
 
 import GmpHttp from 'gmp/http/gmp';
 import { buildServerUrl, buildUrlParams } from 'gmp/http/utils';
@@ -109,7 +108,6 @@ class Gmp {
 
   djangoLogin(username, password) {
     return this._djangoLogin.login(username, password).then(login => {
-      console.log('login', login);
       const { token } = login;
       this.settings.djangotoken = token;
       return {
